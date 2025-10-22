@@ -1,10 +1,11 @@
 import { motion } from 'motion/react';
+import { supabase } from '../lib/supabase';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 
 const inputClass =
   'bg-white/10 border border-white/20 text-white focus:border-white/40 focus:ring-0 bg-black/60 transition-all duration-300 ease-in-out';
@@ -13,10 +14,57 @@ const textareaClass =
   'resize-none bg-black/60 border border-white/25 text-white focus:border-white/40 focus:ring-0 transition-all duration-300 ease-in-out';
 
 export function GetInTouch() {
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // no-op for now
-  }
+
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const name = (formData.get('name') as string) || '';
+    const email = (formData.get('email') as string) || '';
+    const phone = (formData.get('phone') as string) || '';
+    const message = (formData.get('message') as string) || '';
+
+    if (!name || !email || !message) {
+      setSubmitError('Please fill in all required fields');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          customer_name: name,
+          customer_email: email,
+          customer_phone: phone || null,
+          message: message,
+          is_read: false,
+        });
+
+      if (error) {
+        console.error('Error sending message:', error);
+        throw new Error('Failed to send message. Please try again.');
+      }
+
+      setSubmitSuccess(true);
+      form.reset();
+
+      setTimeout(() => {
+        setSubmitSuccess(false);
+      }, 3000);
+    } catch (error: any) {
+      setSubmitError(error.message || 'Failed to send message');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <section
@@ -74,8 +122,18 @@ export function GetInTouch() {
         >
           <Card className="bg-black/0 border border-white/10 shadow-xl">
             <CardContent className="pt-8">
+              {submitError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+                  {submitError}
+                </div>
+              )}
+              {submitSuccess && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm">
+                  Message sent successfully! We'll get back to you soon.
+                </div>
+              )}
                 
-              <form onSubmit={onSubmit} className="space-y-6 text-white">
+              <form onSubmit={handleSubmit} className="space-y-6 text-white">
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <Label
@@ -198,9 +256,33 @@ export function GetInTouch() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="ic-cta text-white px-8 py-6 rounded-[6px]"
+                    disabled={submitting}
+                    className={`ic-cta text-white px-8 py-6 rounded-[6px] relative overflow-hidden flex items-center justify-center ${submitting ? 'pointer-events-none' : ''}`}
+                    aria-live="polite"
                   >
-                    Send Message
+                    {submitting ? (
+                      'Sending...'
+                    ) : submitSuccess ? (
+                      <motion.div
+                        initial={{ scale: 0.98, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center justify-center gap-2 w-full text-center"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          className="w-[1em] h-[1em]"
+                        >
+                          <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span>Message Sent</span>
+                      </motion.div>
+                    ) : (
+                      'Send Message'
+                    )}
                   </Button>
                 </div>
               </form>

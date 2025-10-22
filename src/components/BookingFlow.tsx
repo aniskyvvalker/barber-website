@@ -1,5 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { format } from 'date-fns';
+import { supabase } from "../lib/supabase";
 import {
     Card,
     CardContent,
@@ -29,6 +31,14 @@ import {
     X,
 } from "lucide-react";
 
+// Format a Date to local YYYY-MM-DD (avoid UTC shifting problems)
+const toLocalDateString = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 // Types
 interface Service {
     id: string;
@@ -45,6 +55,7 @@ interface Barber {
     tag: string;
     avatar: string;
     initials: string;
+    is_active?: boolean;
 }
 
 interface BookingData {
@@ -56,110 +67,10 @@ interface BookingData {
     email: string;
     phone: string;
     notes: string;
+    appointmentId?: string;
 }
 
-// Mock data
-const services: Service[] = [
-    {
-        id: "1",
-        name: "Classic Haircut",
-        duration: "45 minutes",
-        price: "$45",
-        description: "",
-        icon: Scissors,
-    },
-    {
-        id: "2",
-        name: "Hot Towel Shave",
-        duration: "30 minutes",
-        price: "$35",
-        description: "",
-        icon: Scissors,
-    },
-    {
-        id: "3",
-        name: "Haircut & Shave",
-        duration: "75 minutes",
-        price: "$70",
-        description: "",
-        icon: Scissors,
-    },
-    {
-        id: "4",
-        name: "Hair Treatment",
-        duration: "45 minutes",
-        price: "$50",
-        description: "",
-        icon: Scissors,
-    },
-    {
-        id: "5",
-        name: "Kids Haircut",
-        duration: "30 minutes",
-        price: "$30",
-        description: "",
-        icon: Scissors,
-    },
-    {
-        id: "6",
-        name: "The Imperial Package",
-        duration: "90 minutes",
-        price: "$95",
-        description: "",
-        icon: Scissors,
-    },
-];
-
-const barbers: Barber[] = [
-    {
-        id: "none",
-        name: "No Preference",
-        tag: "Any available barber",
-        avatar: "",
-        initials: "?",
-    },
-    {
-        id: "1",
-        name: "Marcus Chen",
-        tag: "Master Barber",
-        avatar: "https://images.unsplash.com/photo-1747832512459-5566e6d0ee5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBiYXJiZXIlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NjAzNjE4OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-        initials: "MC",
-    },
-    {
-        id: "2",
-        name: "Jordan Williams",
-        tag: "Senior Stylist",
-        avatar: "https://images.unsplash.com/photo-1648313143880-52cfd6216038?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZW4lMjBoYWlyY3V0JTIwc3R5bGluZ3xlbnwxfHx8fDE3NjAzNjI3MDl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-        initials: "JW",
-    },
-    {
-        id: "3",
-        name: "Alex Rivera",
-        tag: "Grooming Specialist",
-        avatar: "https://images.unsplash.com/photo-1603899968034-1a56ca48d172?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWFyZCUyMHRyaW0lMjBncm9vbWluZ3xlbnwxfHx8fDE3NjAyNzAxMjF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-        initials: "AR",
-    },
-];
-
-// Generate time slots for a specific date
-const generateTimeSlots = (date?: Date) => {
-    const slots: string[] = [];
-    const isFriday = date ? new Date(date).getDay() === 5 : false; // 5 = Friday
-    const startHour = isFriday ? 14 : 9;
-    const endHour = 20; // include 20:00 as the final slot
-    for (let hour = startHour; hour <= endHour; hour++) {
-        for (let minute of [0, 30]) {
-            if (hour === endHour && minute === 30) break; // do not add 20:30
-            const timeStr = `${hour.toString().padStart(2, "0")}:${minute
-                .toString()
-                .padStart(2, "0")}`;
-            slots.push(timeStr);
-        }
-    }
-    return slots;
-};
-
-const timeSlots = generateTimeSlots();
+// Services are now fetched from Supabase within the component
 
 export function BookingFlow({ onClose }: { onClose?: () => void }) {
     const [step, setStep] = useState(1);
@@ -175,6 +86,22 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [hoveredDay, setHoveredDay] = useState<Date | undefined>(undefined);
+
+    // Services state (from Supabase)
+    const [services, setServices] = useState<Service[]>([]);
+    const [loadingServices, setLoadingServices] = useState(true);
+
+    // Barbers state (from Supabase)
+    const [barbers, setBarbers] = useState<Barber[]>([]);
+    const [loadingBarbers, setLoadingBarbers] = useState(true);
+
+    // Availability state (from DB)
+    const [availableSlots, setAvailableSlots] = useState<Array<{ time: string; available: boolean; reason: string | null }>>([]);
+    const [loadingSlots, setLoadingSlots] = useState(false);
+
+    // Submit state
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     // Determine if we should show the mobile (≤600px) stepper
     const [isMobileStepper, setIsMobileStepper] = useState<boolean>(() =>
@@ -197,6 +124,381 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
             mq.removeEventListener ? mq.removeEventListener('change', handler as (e: MediaQueryListEvent) => void) : mq.removeListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => any);
         };
     }, []);
+
+    // Test Supabase connection on mount
+    useEffect(() => {
+        const testConnection = async () => {
+            const { data, error } = await supabase.from('services').select('*');
+            if (error) {
+                console.error('Supabase connection error:', error);
+            } else {
+                console.log('✅ Connected to Supabase! Services:', data);
+            }
+        };
+        testConnection();
+    }, []);
+
+    // Fetch services from Supabase on mount
+    useEffect(() => {
+        const fetchServices = async () => {
+            setLoadingServices(true);
+            const { data, error } = await supabase
+                .from('services')
+                .select('*')
+                .eq('is_active', true)
+                .order('display_order');
+
+            if (error) {
+                console.error('Error fetching services:', error);
+                setLoadingServices(false);
+                return;
+            }
+
+            if (data) {
+                const transformedServices: Service[] = data.map((service: any) => ({
+                    id: service.id,
+                    name: service.name,
+                    duration: `${service.duration} minutes`,
+                    price: `$${service.price}`,
+                    description: service.description || '',
+                    icon: Scissors,
+                }));
+                setServices(transformedServices);
+            }
+
+            setLoadingServices(false);
+        };
+
+        fetchServices();
+    }, []);
+
+    // Fetch barbers from Supabase on mount
+    useEffect(() => {
+        const fetchBarbers = async () => {
+            setLoadingBarbers(true);
+            const { data, error } = await supabase
+                .from('barbers')
+                .select('*');
+
+            if (error) {
+                console.error('Error fetching barbers:', error);
+                setLoadingBarbers(false);
+                return;
+            }
+
+            if (data) {
+                const transformedBarbers: Barber[] = [
+                    { id: "none", name: "No Preference", tag: "Any available barber", avatar: "", initials: "?", is_active: true },
+                    ...data.map((barber: any) => ({
+                        id: barber.id,
+                        name: barber.name,
+                        tag: barber.title,
+                        avatar: barber.photo_url || '',
+                        initials: String(barber.name || '')
+                            .split(' ')
+                            .map((n: string) => n[0])
+                            .join('')
+                            .toUpperCase(),
+                        is_active: barber.is_active,
+                    })),
+                ];
+                setBarbers(transformedBarbers);
+            }
+
+            setLoadingBarbers(false);
+        };
+
+        fetchBarbers();
+    }, []);
+
+    // Validate booking time business rules
+    const validateBookingRules = (selectedDate: Date, selectedTime: string): { valid: boolean; error?: string } => {
+        const now = new Date();
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        const appointmentDateTime = new Date(selectedDate);
+        appointmentDateTime.setHours(hours, minutes, 0, 0);
+
+        // Cannot book more than 62 days in advance
+        const maxDate = new Date(now);
+        maxDate.setDate(maxDate.getDate() + 62);
+        if (appointmentDateTime > maxDate) {
+            return { valid: false, error: 'Cannot book more than 62 days in advance' };
+        }
+
+        const isSameDay = selectedDate.toDateString() === now.toDateString();
+        const hoursDifference = (appointmentDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+        if (isSameDay) {
+            // Same-day: after 13:00 and at least 4 hours in advance
+            if (hours < 13) {
+                return { valid: false, error: 'Same-day bookings must be after 1:00 PM' };
+            }
+            if (hoursDifference < 4) {
+                return { valid: false, error: 'Same-day bookings require at least 4 hours advance notice' };
+            }
+        } else {
+            // Other days: at least 18 hours in advance
+            if (hoursDifference < 18) {
+                return { valid: false, error: 'Bookings require at least 18 hours advance notice' };
+            }
+        }
+
+        return { valid: true };
+    };
+
+    // Fetch available slots for a given date based on appointments/blocks
+    const fetchAvailableSlots = async (date: Date) => {
+        if (!date) return;
+
+        setLoadingSlots(true);
+        try {
+            // Determine selected service duration in minutes
+            const selectedService = bookingData.service;
+            const serviceDuration = selectedService ? parseInt(selectedService.duration) : 30; // e.g. "45 minutes" -> 45
+            const slotsNeeded = Math.ceil((isNaN(serviceDuration) ? 30 : serviceDuration) / 30);
+
+            // Hours by day
+            const isFriday = date.getDay() === 5;
+            const startHour = isFriday ? 14 : 10;
+            const endHour = 20; // 8 PM
+
+            // Generate all possible slots (every 30 min)
+            const allSlots: string[] = [];
+            for (let hour = startHour; hour < endHour; hour++) {
+                for (let minute of [0, 30]) {
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    allSlots.push(timeStr);
+                }
+            }
+
+            // Format date for queries (local)
+            const dateStr = toLocalDateString(date);
+
+            // Determine which barbers to check (exclude inactive)
+            let barberIds: string[] = [];
+            if (!bookingData.barber || bookingData.barber.id === 'none') {
+                barberIds = barbers.filter(b => b.id !== 'none' && b.is_active !== false).map(b => b.id);
+            } else {
+                // If a specific barber is selected but inactive, treat as no available slots
+                const selected = barbers.find(b => b.id === bookingData.barber!.id);
+                if (selected && selected.is_active === false) {
+                    setAvailableSlots([]);
+                    setLoadingSlots(false);
+                    return;
+                }
+                barberIds = [bookingData.barber.id];
+            }
+
+            if (barberIds.length === 0) {
+                setAvailableSlots([]);
+                setLoadingSlots(false);
+                return;
+            }
+
+            // Fetch appointments for date/barbers
+            const { data: appointments, error: appointmentsError } = await supabase
+                .from('appointments')
+                .select('barber_id, appointment_time, end_time')
+                .eq('appointment_date', dateStr)
+                .in('barber_id', barberIds)
+                .in('status', ['pending', 'checked_in']);
+
+            if (appointmentsError) {
+                console.error('Error fetching appointments:', appointmentsError);
+                setAvailableSlots([]);
+                setLoadingSlots(false);
+                return;
+            }
+
+            // Fetch blocked slots that overlap this day (global or specific barbers)
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            let blockedSlots: any[] | null = null;
+            const orFilter = `barber_id.is.null,barber_id.in.(${barberIds.join(',')})`;
+            const { data: blocks, error: blockedError } = await supabase
+                .from('blocked_slots')
+                .select('barber_id, start_datetime, end_datetime')
+                .or(orFilter)
+                .gte('end_datetime', startOfDay.toISOString())
+                .lte('start_datetime', endOfDay.toISOString());
+
+            if (blockedError) {
+                console.error('Error fetching blocked slots:', blockedError);
+                blockedSlots = [];
+            } else {
+                blockedSlots = blocks || [];
+            }
+
+            // Fetch weekly schedules for these barbers for this day of week
+            const dayOfWeek = date.getDay();
+            const { data: schedules, error: schedulesError } = await supabase
+                .from('barber_schedules')
+                .select('barber_id, is_working, start_time, end_time')
+                .eq('day_of_week', dayOfWeek)
+                .in('barber_id', barberIds);
+            if (schedulesError) {
+                console.error('Error fetching barber schedules:', schedulesError);
+            }
+            const scheduleMap = new Map<string, { is_working: boolean; start_time: string | null; end_time: string | null }>();
+            (schedules || []).forEach((s: any) => {
+                scheduleMap.set(s.barber_id, { is_working: s.is_working, start_time: s.start_time, end_time: s.end_time });
+            });
+
+            // Filter available slots for DB conflicts only (intermediate)
+            const available = allSlots.filter(slot => {
+                const [hours, minutes] = slot.split(':').map(Number);
+                const slotTime = new Date(date);
+                slotTime.setHours(hours, minutes, 0, 0);
+
+                // End time for the booking window
+                const slotEndTime = new Date(slotTime);
+                slotEndTime.setMinutes(slotEndTime.getMinutes() + (slotsNeeded * 30));
+
+                // Ensure it doesn't exceed closing time
+                if (slotEndTime.getHours() > endHour || (slotEndTime.getHours() === endHour && slotEndTime.getMinutes() > 0)) {
+                    return false;
+                }
+
+                // Past time check
+                const now = new Date();
+                if (slotTime <= now) return false;
+
+                // At least one barber available for this slot
+                const isAvailableForAnyBarber = barberIds.some(barberId => {
+                    // Check weekly schedule first
+                    const sch = scheduleMap.get(barberId);
+                    if (!sch || sch.is_working === false) return false;
+                    // Validate time within working hours
+                    if (sch.start_time && sch.end_time) {
+                        const [whStartH, whStartM] = sch.start_time.split(':').map(Number);
+                        const [whEndH, whEndM] = sch.end_time.split(':').map(Number);
+                        const workStart = new Date(date);
+                        workStart.setHours(whStartH, whStartM, 0, 0);
+                        const workEnd = new Date(date);
+                        workEnd.setHours(whEndH, whEndM, 0, 0);
+                        if (!(slotTime >= workStart && slotEndTime <= workEnd)) return false;
+                    }
+                    // Appointment overlap check
+                    const hasConflict = (appointments || []).some(apt => {
+                        if (apt.barber_id !== barberId) return false;
+                        const aptStart = new Date(date);
+                        const [aptHours, aptMinutes] = String(apt.appointment_time).split(':').map(Number);
+                        aptStart.setHours(aptHours, aptMinutes, 0, 0);
+                        const aptEnd = new Date(date);
+                        const [endHours, endMinutes] = String(apt.end_time).split(':').map(Number);
+                        aptEnd.setHours(endHours, endMinutes, 0, 0);
+                        return slotTime < aptEnd && slotEndTime > aptStart;
+                    });
+                    if (hasConflict) return false;
+
+                    // Blocked intervals overlap check
+                    const isBlocked = (blockedSlots || []).some(blocked => {
+                        if (blocked.barber_id !== null && blocked.barber_id !== barberId) return false;
+                        const blockStart = new Date(blocked.start_datetime);
+                        const blockEnd = new Date(blocked.end_datetime);
+                        return slotTime < blockEnd && slotEndTime > blockStart;
+                    });
+                    return !isBlocked;
+                });
+
+                return isAvailableForAnyBarber;
+            });
+
+            // Instead of filtering, mark each slot as available or not
+            const slotsWithStatus = allSlots.map(slot => {
+                const [hours, minutes] = slot.split(':').map(Number);
+                const slotTime = new Date(date);
+                slotTime.setHours(hours, minutes, 0, 0);
+
+                const slotEndTime = new Date(slotTime);
+                slotEndTime.setMinutes(slotEndTime.getMinutes() + (slotsNeeded * 30));
+
+                const now = new Date();
+                if (slotTime <= now) {
+                    return null; // Will be filtered out
+                }
+
+                if (slotEndTime.getHours() > endHour || (slotEndTime.getHours() === endHour && slotEndTime.getMinutes() > 0)) {
+                    return { time: slot, available: false, reason: 'Insufficient time before closing' };
+                }
+
+                const validation = validateBookingRules(date, slot);
+                if (!validation.valid) {
+                    return { time: slot, available: false, reason: validation.error || null };
+                }
+
+                const isAvailableForAnyBarber = barberIds.some(barberId => {
+                    // Check weekly schedule first
+                    const sch = scheduleMap.get(barberId);
+                    if (!sch || sch.is_working === false) return false;
+                    if (sch.start_time && sch.end_time) {
+                        const [whStartH, whStartM] = sch.start_time.split(':').map(Number);
+                        const [whEndH, whEndM] = sch.end_time.split(':').map(Number);
+                        const workStart = new Date(date);
+                        workStart.setHours(whStartH, whStartM, 0, 0);
+                        const workEnd = new Date(date);
+                        workEnd.setHours(whEndH, whEndM, 0, 0);
+                        if (!(slotTime >= workStart && slotEndTime <= workEnd)) return false;
+                    }
+                    const hasConflict = (appointments || []).some(apt => {
+                        if (apt.barber_id !== barberId) return false;
+                        const aptStart = new Date(date);
+                        const [aptHours, aptMinutes] = String(apt.appointment_time).split(':').map(Number);
+                        aptStart.setHours(aptHours, aptMinutes, 0, 0);
+                        const aptEnd = new Date(date);
+                        const [endHours, endMinutes] = String(apt.end_time).split(':').map(Number);
+                        aptEnd.setHours(endHours, endMinutes, 0, 0);
+                        return slotTime < aptEnd && slotEndTime > aptStart;
+                    });
+                    if (hasConflict) return false;
+
+                    const isBlocked = (blockedSlots || []).some(blocked => {
+                        if (blocked.barber_id !== null && blocked.barber_id !== barberId) return false;
+                        const blockStart = new Date(blocked.start_datetime);
+                        const blockEnd = new Date(blocked.end_datetime);
+                        return slotTime < blockEnd && slotEndTime > blockStart;
+                    });
+                    return !isBlocked;
+                });
+
+                if (!isAvailableForAnyBarber) {
+                    return { time: slot, available: false, reason: 'Fully booked' };
+                }
+
+                return { time: slot, available: true, reason: null };
+            }).filter(slot => slot !== null) as Array<{ time: string; available: boolean; reason: string | null }>;
+
+            setAvailableSlots(slotsWithStatus);
+        } catch (error) {
+            console.error('Error checking availability:', error);
+            setAvailableSlots([]);
+        }
+
+        setLoadingSlots(false);
+    };
+
+    // Recompute available slots when inputs change
+    useEffect(() => {
+        if (bookingData.date && bookingData.service && barbers.length > 0) {
+            fetchAvailableSlots(bookingData.date);
+        } else {
+            setAvailableSlots([]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [bookingData.date, bookingData.service, bookingData.barber, services, barbers]);
+
+    const handleTimeSelection = (time: string) => {
+        if (!bookingData.date) return;
+        const validation = validateBookingRules(bookingData.date, time);
+        if (!validation.valid) {
+            alert(validation.error);
+            return;
+        }
+        setBookingData({ ...bookingData, time });
+    };
 
     const updateBookingData = (field: keyof BookingData, value: any) => {
         setBookingData((prev) => ({ ...prev, [field]: value }));
@@ -298,9 +600,201 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
         setStep((prev) => Math.max(prev - 1, 1));
     };
 
-    const confirmBooking = () => {
-        if (validateStep()) {
+    const confirmBooking = async () => {
+        if (!validateStep()) return;
+
+        setSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            // Resolve selected service
+            const selectedService = bookingData.service;
+            if (!selectedService) {
+                throw new Error('Selected service not found');
+            }
+
+            // Determine assigned barber id
+            let assignedBarberId: string | undefined = bookingData.barber?.id;
+
+            // If no preference, pick an available barber for the chosen slot
+            if (!bookingData.barber || bookingData.barber.id === 'none') {
+                const dateStr = toLocalDateString(bookingData.date!);
+                const serviceDuration = parseInt(selectedService.duration); // e.g. "45 minutes" -> 45
+                const slotsNeeded = Math.ceil((isNaN(serviceDuration) ? 30 : serviceDuration) / 30);
+
+                const [h, m] = bookingData.time!.split(':').map(Number);
+                const startTime = new Date(bookingData.date!);
+                startTime.setHours(h, m, 0, 0);
+                const endTime = new Date(startTime);
+                endTime.setMinutes(endTime.getMinutes() + (slotsNeeded * 30));
+                const timeStr = bookingData.time!;
+                const endTimeStr = `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`;
+
+                // Only consider active barbers
+                const availableBarberIds = barbers.filter(b => b.id !== 'none' && b.is_active !== false).map(b => b.id);
+
+                const { data: appointments } = await supabase
+                    .from('appointments')
+                    .select('barber_id, appointment_time, end_time')
+                    .eq('appointment_date', dateStr)
+                    .in('barber_id', availableBarberIds)
+                    .in('status', ['confirmed', 'checked_in']);
+
+                // Filter out busy barbers by overlap
+                const busyBarbers = (appointments || []).filter(apt => {
+                    const aptStart = String(apt.appointment_time);
+                    const aptEnd = String(apt.end_time);
+                    // string compare would be brittle; compare as times
+                    const [asH, asM] = aptStart.split(':').map(Number);
+                    const [aeH, aeM] = aptEnd.split(':').map(Number);
+                    const aptStartDate = new Date(bookingData.date!);
+                    aptStartDate.setHours(asH, asM, 0, 0);
+                    const aptEndDate = new Date(bookingData.date!);
+                    aptEndDate.setHours(aeH, aeM, 0, 0);
+                    return !(endTime <= aptStartDate || startTime >= aptEndDate);
+                }).map(apt => apt.barber_id);
+
+                let freeBarbers = availableBarberIds.filter(id => !busyBarbers.includes(id));
+                if (freeBarbers.length === 0) {
+                    throw new Error('No barbers available for this time slot');
+                }
+
+                // Pick a barber and re-validate just before insert to avoid race assigning same barber twice
+                // Retry across remaining free barbers if conflict is detected
+                while (freeBarbers.length > 0) {
+                    const pickIndex = Math.floor(Math.random() * freeBarbers.length);
+                    const candidateId = freeBarbers[pickIndex];
+
+                    // Re-check candidate availability right now
+                    const { data: latestApts } = await supabase
+                        .from('appointments')
+                        .select('id')
+                        .eq('appointment_date', dateStr)
+                        .eq('barber_id', candidateId)
+                        .in('status', ['pending', 'checked_in'])
+                        .or(`and(appointment_time.eq.${timeStr}:00,end_time.eq.${endTimeStr}:00),and(appointment_time.lt.${endTimeStr}:00,end_time.gt.${timeStr}:00)`);
+
+                    if (!latestApts || latestApts.length === 0) {
+                        assignedBarberId = candidateId;
+                        break;
+                    }
+                    // Remove candidate and try another
+                    freeBarbers.splice(pickIndex, 1);
+                }
+
+                if (!assignedBarberId) {
+                    throw new Error('No barbers available (race condition). Please try again.');
+                }
+            }
+
+            if (!assignedBarberId) {
+                throw new Error('Could not determine barber');
+            }
+
+            // Calculate end time for insert
+            const [hours, minutes] = bookingData.time!.split(':').map(Number);
+            const serviceDuration = parseInt(selectedService.duration);
+            const roundedDuration = Math.ceil((isNaN(serviceDuration) ? 30 : serviceDuration) / 30) * 30;
+
+            const endTimeDate = new Date(bookingData.date!);
+            endTimeDate.setHours(hours, minutes, 0, 0);
+            endTimeDate.setMinutes(endTimeDate.getMinutes() + roundedDuration);
+            const endTimeStr = `${endTimeDate.getHours().toString().padStart(2, '0')}:${endTimeDate.getMinutes().toString().padStart(2, '0')}:00`;
+
+            // Final overlap guard for the chosen barber to avoid double-assign
+            {
+                const dateStr = toLocalDateString(bookingData.date!);
+                const timeStr = bookingData.time!;
+                const endStr = endTimeStr.slice(0,5); // HH:MM
+                const { data: overlap } = await supabase
+                  .from('appointments')
+                  .select('id')
+                  .eq('appointment_date', dateStr)
+                  .eq('barber_id', assignedBarberId)
+                  .in('status', ['pending', 'checked_in'])
+                  .or(`and(appointment_time.eq.${timeStr}:00,end_time.eq.${endStr}:00),and(appointment_time.lt.${endStr}:00,end_time.gt.${timeStr}:00)`);
+                if (overlap && overlap.length > 0) {
+                    if (bookingData.barber && bookingData.barber.id !== 'none') {
+                        throw new Error('Selected barber just became unavailable for this time. Please pick another time or barber.');
+                    } else {
+                        throw new Error('No barbers available for this time slot');
+                    }
+                }
+            }
+
+            // Throttle: max 3 future appointments for this phone
+            const { data: existingAppointments } = await supabase
+                .from('appointments')
+                .select('id')
+                .eq('customer_phone', bookingData.phone)
+                .gte('appointment_date', toLocalDateString(new Date()))
+                .in('status', ['pending', 'checked_in']);
+
+            if (existingAppointments && existingAppointments.length >= 3) {
+                throw new Error('You already have 3 future appointments. Please cancel one before booking another.');
+            }
+
+            // Insert appointment
+            const { data: appointment, error: insertError } = await supabase
+                .from('appointments')
+                .insert({
+                    customer_name: bookingData.name,
+                    customer_email: bookingData.email,
+                    customer_phone: bookingData.phone,
+                    barber_id: assignedBarberId,
+                    barber_preference: (!bookingData.barber || bookingData.barber.id === 'none') ? 'no_preference' : 'specific',
+                    service_id: bookingData.service?.id,
+                    appointment_date: toLocalDateString(bookingData.date!),
+                    appointment_time: bookingData.time + ':00',
+                    end_time: endTimeStr,
+                    customer_message: bookingData.notes || null,
+                    status: 'pending',
+                })
+                .select()
+                .single();
+
+            if (insertError) {
+                console.error('Error creating appointment:', insertError);
+                throw new Error(insertError.message || 'Failed to create appointment');
+            }
+
+            try {
+                const selectedBarber = barbers.find(b => b.id === assignedBarberId);
+                const formattedDate = format(bookingData.date!, 'MMMM dd, yyyy');
+                const priceNumber = (() => {
+                    const raw = (selectedService.price || '').toString();
+                    const cleaned = raw.replace('$', '').trim();
+                    const n = parseFloat(cleaned);
+                    return isNaN(n) ? 0 : n;
+                })();
+                const { data: emailData, error: emailError } = await supabase.functions.invoke('send-booking-email', {
+                    body: {
+                        to: bookingData.email,
+                        customerName: bookingData.name,
+                        serviceName: selectedService.name,
+                        barberName: selectedBarber?.name || 'Our team',
+                        appointmentDate: formattedDate,
+                        appointmentTime: bookingData.time,
+                        price: priceNumber,
+                    }
+                });
+                if (emailError) {
+                    console.error('Error sending email:', emailError);
+                } else {
+                    console.log('✅ Confirmation email sent:', emailData);
+                }
+            } catch (emailError) {
+                console.error('Error sending email:', emailError);
+            }
+
+            // Save id to state and advance
+            setBookingData({ ...bookingData, appointmentId: appointment.id });
             setStep(6);
+        } catch (error: any) {
+            console.error('Booking error:', error);
+            setSubmitError(error.message || 'Failed to create appointment. Please try again.');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -545,44 +1039,48 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                                 <h2 className="text-2xl mb-8">
                                     Choose Your Service
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {services.map((service) => (
-                                        <Card
-                                            key={service.id}
-                                            role="button"
-                                            onClick={() =>
-                                                updateBookingData("service", service)
-                                            }
-                                            className={`cursor-pointer transition-all duration-300 service-card border-2 text-center group ${
-                                                bookingData.service?.id === service.id
-                                                    ? "is-selected border-accent bg-[#ede9e6] -translate-y-1"
-                                                    : "border-border"
-                                            }`}
-                                            style={
-                                                bookingData.service?.id === service.id
-                                                    ? { backgroundColor: '#ede9e6' }
-                                                    : undefined
-                                            }
-                                        >
-                                            <CardContent className="p-6">
-                                                <div className="space-y-3">
-                                                    <h3 className="text-xl transition-colors">
-                                                        {service.name}
-                                                    </h3>
-                                                    <p
-                                                        className="text-3xl transition-colors"
-                                                        style={{ color: "#C9A961" }}
-                                                    >
-                                                        {service.price}
-                                                    </p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {service.duration}
-                                                    </p>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
+                                {loadingServices ? (
+                                    <div className="text-center py-8">Loading services...</div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {services.map((service) => (
+                                            <Card
+                                                key={service.id}
+                                                role="button"
+                                                onClick={() =>
+                                                    updateBookingData("service", service)
+                                                }
+                                                className={`cursor-pointer transition-all duration-300 service-card border-2 text-center group ${
+                                                    bookingData.service?.id === service.id
+                                                        ? "is-selected border-accent bg-[#ede9e6] -translate-y-1"
+                                                        : "border-border"
+                                                }`}
+                                                style={
+                                                    bookingData.service?.id === service.id
+                                                        ? { backgroundColor: '#ede9e6' }
+                                                        : undefined
+                                                }
+                                            >
+                                                <CardContent className="p-6">
+                                                    <div className="space-y-3">
+                                                        <h3 className="text-xl transition-colors">
+                                                            {service.name}
+                                                        </h3>
+                                                        <p
+                                                            className="text-3xl transition-colors"
+                                                            style={{ color: "#C9A961" }}
+                                                        >
+                                                            {service.price}
+                                                        </p>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            {service.duration}
+                                                        </p>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
                                 {errors.service && (
                                     <p className="text-destructive text-sm mt-4">
                                         {errors.service}
@@ -597,41 +1095,52 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                                 <h2 className="text-2xl mb-8">
                                     Choose Your Barber
                                 </h2>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                    {barbers.map((barber) => (
-                                        <Card
-                                            key={barber.id}
-                                            role="button"
-                                            onClick={() =>
-                                                updateBookingData("barber", barber)
-                                            }
-                                            className={`cursor-pointer transition-all duration-300 service-card border-2 ${
-                                                bookingData.barber?.id === barber.id
-                                                    ? "is-selected border-accent bg-[#ede9e6] -translate-y-1"
-                                                    : "border-border"
-                                            }`}
-                                            style={
-                                                bookingData.barber?.id === barber.id
-                                                    ? { backgroundColor: '#ede9e6' }
-                                                    : undefined
-                                            }
-                                        >
-                                            <CardContent className="p-6 text-center flex flex-col items-center">
-                                                <div
-                                                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 text-xl ${
-                                                        bookingData.barber?.id === barber.id
-                                                            ? "bg-accent text-white"
-                                                            : "bg-muted text-foreground"
+                                {loadingBarbers ? (
+                                    <div className="text-center py-8">Loading barbers...</div>
+                                ) : (
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                        {barbers.map((barber) => {
+                                            const isInactive = barber.id !== 'none' && barber.is_active === false;
+                                            const isSelected = bookingData.barber?.id === barber.id;
+                                            const clickable = barber.id === 'none' || !isInactive;
+                                            return (
+                                                <Card
+                                                    key={barber.id}
+                                                    role="button"
+                                                    aria-disabled={!clickable}
+                                                    data-inactive={isInactive ? 'true' : undefined}
+                                                    onClick={() => {
+                                                        if (!clickable) return;
+                                                        updateBookingData("barber", barber);
+                                                    }}
+                                                    className={`transition-all duration-300 service-card border-2 ${
+                                                        isSelected ? "is-selected border-accent bg-[#ede9e6] -translate-y-1" : "border-border"
+                                                    } ${
+                                                        isInactive ? "inactive-card opacity-50 grayscale cursor-not-allowed pointer-events-none" : "cursor-pointer"
                                                     }`}
+                                                    style={
+                                                        isSelected ? { backgroundColor: '#ede9e6' } : undefined
+                                                    }
                                                 >
-                                                    {barber.initials}
-                                                </div>
-                                                <h3 className="mb-1">{barber.name}</h3>
-                                                <p className="text-xs text-muted-foreground">{barber.tag}</p>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
+                                                    <CardContent className="p-6 text-center flex flex-col items-center">
+                                                        <div
+                                                            className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 text-xl ${
+                                                                isSelected ? "bg-accent text-white" : "bg-muted text-foreground"
+                                                            }`}
+                                                        >
+                                                            {barber.initials}
+                                                        </div>
+                                                        <h3 className="mb-1">{barber.name}</h3>
+                                                        <p className="text-xs text-muted-foreground">{barber.tag}</p>
+                                                        {isInactive && (
+                                                            <span className="mt-2 text-[11px] px-2 py-0.5 rounded bg-gray-200 text-gray-600">Inactive</span>
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                                 {errors.barber && (
                                     <p className="text-destructive text-sm mt-4">
                                         {errors.barber}
@@ -853,36 +1362,38 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                                         </h3>
                                         <Card>
                                             <CardContent className="p-6">
-                                            <div className="time-grid">
-                                                {generateTimeSlots(
-                                                    bookingData.date
-                                                ).map((time) => {
-                                                    const disabled =
-                                                        isPastTime(time);
-                                                    return (
-                                                        <button
-                                                            key={time}
-                                                            className={`py-3 px-2 border rounded transition-colors text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground ${
-                                                                bookingData.time ===
-                                                                time
-                                                                    ? "bg-foreground text-background border-foreground"
-                                                                    : disabled
-                                                                    ? "border-border text-muted-foreground/30 cursor-not-allowed"
-                                                                    : "border-border hover:border-[#C9A961] hover:bg-[#f7f1e8]"
-                                                            }`}
-                                                            onClick={() =>
-                                                                !disabled &&
-                                                                updateBookingData(
-                                                                    "time",
-                                                                    time
-                                                                )
-                                                            }
-                                                            disabled={disabled}>
-                                                            {time}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
+                                            {loadingSlots ? (
+                                                <div className="text-center py-8">Checking availability...</div>
+                                            ) : availableSlots.length === 0 ? (
+                                                <div className="text-center py-8 text-muted-foreground">
+                                                    No available time slots for this date. Please select another date.
+                                                </div>
+                                            ) : (
+                                                <div className="time-grid">
+                                                    {availableSlots.map((slot) => {
+                                                        const selected = bookingData.time === slot.time;
+                                                        const disabled = !slot.available;
+                                                        return (
+                                                            <button
+                                                                key={slot.time}
+                                                                className={`py-3 px-2 border rounded transition-colors text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground ${
+                                                                    selected
+                                                                        ? "bg-foreground text-background border-foreground"
+                                                                        : disabled
+                                                                        ? "border-border !text-[#DDDDDD] cursor-not-allowed"
+                                                                        : "border-border hover:border-[#C9A961] hover:bg-[#f7f1e8]"
+                                                                }`}
+                                                                onClick={() => !disabled && handleTimeSelection(slot.time)}
+                                                                disabled={disabled}
+                                                                title={slot.reason || undefined}
+                                                                style={disabled ? { color: '#DDDDDD' } : undefined}
+                                                            >
+                                                                {slot.time}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
                                             </CardContent>
                                         </Card>
                                         {errors.time && (
@@ -1373,11 +1884,19 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                                 Next
                             </Button>
                         ) : (
-                            <Button
-                                onClick={confirmBooking}
-                                className="flex-1 md:flex-none md:min-w-[400px] bg-foreground text-background hover:bg-foreground/90 px-8 py-6 uppercase tracking-wider !transition-none">
-                                Confirm Booking
-                            </Button>
+                            <>
+                                {submitError && (
+                                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+                                        {submitError}
+                                    </div>
+                                )}
+                                <Button
+                                    onClick={confirmBooking}
+                                    disabled={submitting}
+                                    className="flex-1 md:flex-none md:min-w-[400px] bg-foreground text-background hover:bg-foreground/90 disabled:opacity-70 px-8 py-6 uppercase tracking-wider !transition-none">
+                                    {submitting ? 'Creating Appointment...' : 'Confirm Booking'}
+                                </Button>
+                            </>
                         )}
                     </div>
                 )}

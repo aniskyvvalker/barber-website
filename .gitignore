@@ -1,3 +1,40 @@
 node_modules/
 dist/
 .env
+.env.local
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Build outputs (various tools)
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.turbo/
+.vercel/
+.netlify/
+.eslintcache
+.swc/
+.vite/
+
+# Environment files
+.env.*
+!.env.example
+
+# Supabase: keep migrations/schema, ignore local secrets/temp
+supabase/.env
+supabase/.secrets
+supabase/.temp/
+supabase/.branches/

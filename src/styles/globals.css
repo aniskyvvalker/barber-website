@@ -177,7 +177,7 @@
 }
 
 /* Hover: lift slightly and use the price color for border */
-.service-card:not(.is-selected):hover {
+.service-card:not(.is-selected):not([aria-disabled="true"]):hover {
   transform: translateY(-2px);
   border-color: var(--price-color);
 }
@@ -191,6 +191,14 @@
 .service-card.is-selected:hover {
   transform: translateY(-4px); /* keep same lift on hover */
   border-color: var(--accent);
+}
+
+/* Inactive cards: no hover/lift at all */
+.service-card[aria-disabled="true"],
+.service-card[aria-disabled="true"]:hover {
+  transform: none !important;
+  border-color: var(--border) !important;
+  pointer-events: none !important;
 }
 
 /**
@@ -252,6 +260,130 @@ html {
   font-size: var(--font-size);
   overflow-x: hidden;
   width: 100%;
+}
+
+/* Force centering for admin appointments table */
+.appointments-table th,
+.appointments-table td {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+.appointments-table td > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.appointments-table .rdp {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Admin dropdown option styling overrides */
+.appointments-table [role="option"] {
+  background-color: #ffffff !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.appointments-table [role="option"]:hover,
+.appointments-table [role="option"][data-highlighted] {
+  background-color: #f9fafb !important; /* gray-50 */
+}
+
+.appointments-table [role="option"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.appointments-table [role="option"][data-state="checked"] {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  font-weight: 500;
+}
+
+/* Ensure status dropdown (portal) uses clean admin styles */
+.admin-status-menu {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important; /* gray-200 */
+  color: #111827 !important; /* gray-900 */
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1) !important;
+}
+
+.admin-status-menu [role="option"] {
+  background-color: #ffffff !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.admin-status-menu [role="option"]:hover,
+.admin-status-menu [role="option"][data-highlighted] {
+  background-color: #f9fafb !important; /* gray-50 */
+}
+
+.admin-status-menu [role="option"][data-state="checked"] {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  font-weight: 500 !important;
+}
+
+/* Remove default checkmark indicator from selected option */
+.admin-status-menu [role="option"][data-state="checked"] svg {
+  display: none !important;
+}
+
+/* Remove padding from the admin appointments CardContent wrapper */
+.admin-appointments-card [data-slot="card-content"] {
+  padding: 0 !important;
+}
+
+/* Remove the bottom border line from the appointments table */
+.appointments-table {
+  border-bottom: none !important;
+}
+.appointments-table tbody tr:last-child {
+  border-bottom: none !important;
+}
+
+/* Force red styling for admin cancel buttons */
+.admin-cancel-btn {
+  background-color: #dc2626 !important; /* red-600 */
+  color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+}
+.admin-cancel-btn:hover:not(:disabled) {
+  background-color: #b91c1c !important; /* red-700 */
+  border-color: #b91c1c !important;
+}
+.admin-cancel-btn:disabled {
+  background-color: #fca5a5 !important; /* red-300 */
+  border-color: #fca5a5 !important;
+  color: rgba(255,255,255,0.8) !important;
+}
+
+/* Ensure icon size inside the delete button */
+.admin-cancel-btn svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Force blue primary styling for header action button */
+.admin-primary-btn {
+  background-color: #2563eb !important; /* blue-600 */
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
+}
+.admin-primary-btn:hover {
+  background-color: #1d4ed8 !important; /* blue-700 */
+  border-color: #1d4ed8 !important;
+}
+
+/* Make sure alert dialog overlays/content are above everything */
+[data-slot="alert-dialog-overlay"] {
+  z-index: 9998 !important;
+}
+[data-slot="alert-dialog-content"] {
+  z-index: 9999 !important;
 }
 
 body {
