@@ -1,419 +1,918 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400;0,600;1,600;0,700;1,700&display=swap');
+/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400;0,600;1,600;0,700;1,700&display=swap"); */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 /* BookingFlow: unify selection color across inputs and textarea */
 .booking-scope input::selection,
 .booking-scope textarea::selection {
-  background-color: rgba(201, 169, 97, 0.25) !important; /* #C9A961 at ~25% */
-  color: inherit;
+    background-color: rgba(201, 169, 97, 0.25) !important; /* #C9A961 at ~25% */
+    color: inherit;
 }
 
 /* Firefox selection */
 .booking-scope input::-moz-selection,
 .booking-scope textarea::-moz-selection {
-  background-color: rgba(201, 169, 97, 0.25) !important;
-  color: inherit;
+    background-color: rgba(201, 169, 97, 0.25) !important;
+    color: inherit;
 }
 
 /* BookingFlow: make placeholders lighter/less visible */
 .booking-scope input::placeholder,
 .booking-scope textarea::placeholder {
-  color: #bbb8b4 !important; /* lighter than --muted-foreground */
+    color: #bbb8b4 !important; /* lighter than --muted-foreground */
 }
-
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-size: 16px;
-  --background: #FAF7F2;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #2C2416;
-  --primary-foreground: #FAF7F2;
-  --secondary: #D4B896;
-  --secondary-foreground: #2C2416;
-  --muted: #E8DCC8;
-  --muted-foreground: #6B6558;
-  --accent: #8B6F47;
-  /* Lighter accent for hover borders */
-  --accent-light: color-mix(in oklab, var(--accent) 60%, white);
-  --accent-foreground: #FAF7F2;
+    --font-size: 16px;
+    --background: #faf7f2;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
+    --primary: #2c2416;
+    --primary-foreground: #faf7f2;
+    --secondary: #d4b896;
+    --secondary-foreground: #2c2416;
+    --muted: #e8dcc8;
+    --muted-foreground: #6b6558;
+    --accent: #8b6f47;
+    /* Lighter accent for hover borders */
+    --accent-light: color-mix(in oklab, var(--accent) 60%, white);
+    --accent-foreground: #faf7f2;
 }
 
 /* Navbar desktop CTA text color enforcement */
 .nav-cta-text {
-  color: #8B6F47 !important;
+    color: #8b6f47 !important;
 }
 .group:hover .nav-cta-text {
-  color: #ffffff !important;
+    color: #ffffff !important;
 }
 
 :root {
-  /* Price color used in UI (match hover border to this) */
-  --price-color: #C9A961;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
-  --border: rgba(44, 36, 22, 0.1);
-  --input: transparent;
-  --input-background: #FFFFFF;
-  --switch-background: #cbced4;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --ring: #8B6F47;
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+    /* Price color used in UI (match hover border to this) */
+    --price-color: #c9a961;
+    --destructive: #d4183d;
+    --destructive-foreground: #ffffff;
+    --border: rgba(44, 36, 22, 0.1);
+    --input: transparent;
+    --input-background: rgba(0, 0, 0, 0.6);
+    --switch-background: #cbced4;
+    --font-weight-medium: 500;
+    --font-weight-normal: 400;
+    --ring: #8b6f47;
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --radius: 0.5rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: #030213;
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  /* Lighter accent for hover borders in dark mode */
-  --accent-light: color-mix(in oklab, var(--accent) 60%, white);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.145 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    /* Lighter accent for hover borders in dark mode */
+    --accent-light: color-mix(in oklab, var(--accent) 60%, white);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --ring: oklch(0.439 0 0);
+    --font-weight-medium: 500;
+    --font-weight-normal: 400;
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(0.269 0 0);
+    --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-input-background: var(--input-background);
-  --color-switch-background: var(--switch-background);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-input-background: var(--input-background);
+    --color-switch-background: var(--switch-background);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
+    * {
+        @apply border-border outline-ring/50;
+    }
 
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-  }
+    body {
+        @apply bg-background text-foreground;
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden;
+    }
 }
 
 /* Service card hover effect: subtle lift and lighter border */
 .service-card {
-  transition: transform 220ms var(--ease-out),
-              border-color 220ms var(--ease-out);
+    transition: transform 220ms var(--ease-out),
+        border-color 220ms var(--ease-out);
 }
 
 /* Hover: lift slightly and use the price color for border */
 .service-card:not(.is-selected):not([aria-disabled="true"]):hover {
-  transform: translateY(-2px);
-  border-color: var(--price-color);
+    transform: translateY(-2px);
+    border-color: var(--price-color);
 }
 
 /* When selected, keep the lifted state; do not reduce on hover */
 .service-card.is-selected {
-  transform: translateY(-4px); /* persistent lift when selected */
-  border-color: var(--accent);
+    transform: translateY(-4px); /* persistent lift when selected */
+    border-color: var(--accent);
 }
 
 .service-card.is-selected:hover {
-  transform: translateY(-4px); /* keep same lift on hover */
-  border-color: var(--accent);
+    transform: translateY(-4px); /* keep same lift on hover */
+    border-color: var(--accent);
 }
 
 /* Inactive cards: no hover/lift at all */
 .service-card[aria-disabled="true"],
 .service-card[aria-disabled="true"]:hover {
-  transform: none !important;
-  border-color: var(--border) !important;
-  pointer-events: none !important;
+    transform: none !important;
+    border-color: var(--border) !important;
+    pointer-events: none !important;
 }
 
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */
 @layer base {
-  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
-    h1 {
-      font-size: var(--text-2xl);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+    :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+        h1 {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    h2 {
-      font-size: var(--text-xl);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+        h2 {
+            font-size: var(--text-xl);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    h3 {
-      font-size: var(--text-lg);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+        h3 {
+            font-size: var(--text-lg);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    h4 {
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+        h4 {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    p {
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-normal);
-      line-height: 1.5;
-    }
+        p {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-normal);
+            line-height: 1.5;
+        }
 
-    label {
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+        label {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    button {
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.5;
-    }
+        button {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.5;
+        }
 
-    input {
-      font-size: var(--text-base);
-      font-weight: var(--font-weight-normal);
-      line-height: 1.5;
+        input {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-normal);
+            line-height: 1.5;
+        }
     }
-  }
 }
 
 html {
-  font-size: var(--font-size);
-  overflow-x: hidden;
-  width: 100%;
+    font-size: var(--font-size);
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* Force centering for admin appointments table */
 .appointments-table th,
 .appointments-table td {
-  text-align: center !important;
-  vertical-align: middle;
+    text-align: left !important;
+    vertical-align: middle;
 }
 
 .appointments-table td > * {
-  margin-left: auto;
-  margin-right: auto;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .appointments-table .rdp {
-  margin-left: auto;
-  margin-right: auto;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 /* Admin dropdown option styling overrides */
 .appointments-table [role="option"] {
-  background-color: #ffffff !important;
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
+    background-color: #ffffff !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .appointments-table [role="option"]:hover,
 .appointments-table [role="option"][data-highlighted] {
-  background-color: #f9fafb !important; /* gray-50 */
+    background-color: #f9fafb !important; /* gray-50 */
 }
 
 .appointments-table [role="option"]:focus {
-  outline: none !important;
-  box-shadow: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .appointments-table [role="option"][data-state="checked"] {
-  background-color: #f3f4f6 !important; /* gray-100 */
-  font-weight: 500;
+    background-color: #f3f4f6 !important; /* gray-100 */
+    font-weight: 500;
 }
 
 /* Ensure status dropdown (portal) uses clean admin styles */
 .admin-status-menu {
-  background-color: #ffffff !important;
-  border: 1px solid #e5e7eb !important; /* gray-200 */
-  color: #111827 !important; /* gray-900 */
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1) !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important; /* gray-200 */
+    color: #111827 !important; /* gray-900 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .admin-status-menu [role="option"] {
-  background-color: #ffffff !important;
-  border: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
+    background-color: #ffffff !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .admin-status-menu [role="option"]:hover,
 .admin-status-menu [role="option"][data-highlighted] {
-  background-color: #f9fafb !important; /* gray-50 */
+    background-color: #f9fafb !important; /* gray-50 */
 }
 
 .admin-status-menu [role="option"][data-state="checked"] {
-  background-color: #f3f4f6 !important; /* gray-100 */
-  font-weight: 500 !important;
+    background-color: #f3f4f6 !important; /* gray-100 */
+    font-weight: 500 !important;
 }
 
 /* Remove default checkmark indicator from selected option */
 .admin-status-menu [role="option"][data-state="checked"] svg {
-  display: none !important;
+    display: none !important;
 }
 
 /* Remove padding from the admin appointments CardContent wrapper */
 .admin-appointments-card [data-slot="card-content"] {
-  padding: 0 !important;
+    padding: 0 !important;
 }
 
 /* Remove the bottom border line from the appointments table */
 .appointments-table {
-  border-bottom: none !important;
+    border-bottom: none !important;
 }
 .appointments-table tbody tr:last-child {
-  border-bottom: none !important;
+    border-bottom: none !important;
 }
 
 /* Force red styling for admin cancel buttons */
 .admin-cancel-btn {
-  background-color: #dc2626 !important; /* red-600 */
-  color: #ffffff !important;
-  border: 1px solid #dc2626 !important;
+    background-color: #dc2626 !important; /* red-600 */
+    color: #ffffff !important;
+    border: 1px solid #dc2626 !important;
 }
 .admin-cancel-btn:hover:not(:disabled) {
-  background-color: #b91c1c !important; /* red-700 */
-  border-color: #b91c1c !important;
+    background-color: #c72020 !important; /* red-700 */
+    border-color: #c72020 !important;
 }
 .admin-cancel-btn:disabled {
-  background-color: #fca5a5 !important; /* red-300 */
-  border-color: #fca5a5 !important;
-  color: rgba(255,255,255,0.8) !important;
+    background-color: #fca5a5 !important; /* red-300 */
+    border-color: #fca5a5 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* Ensure icon size inside the delete button */
 .admin-cancel-btn svg {
-  width: 12px !important;
-  height: 12px !important;
+    width: 12px !important;
+    height: 12px !important;
 }
 
 /* Force blue primary styling for header action button */
 .admin-primary-btn {
-  background-color: #2563eb !important; /* blue-600 */
-  color: #ffffff !important;
-  border: 1px solid #2563eb !important;
+    background-color: #2563eb !important; /* blue-600 */
+    color: #ffffff !important;
+    border: 1px solid #2563eb !important;
 }
 .admin-primary-btn:hover {
-  background-color: #1d4ed8 !important; /* blue-700 */
-  border-color: #1d4ed8 !important;
+    background-color: #1d4ed8 !important; /* blue-700 */
+    border-color: #1d4ed8 !important;
+}
+
+/* Fixed width for select triggers (filters) */
+.fixed-select-trigger {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+}
+
+/* Narrower status filter trigger only */
+.status-select-trigger {
+    width: 110px !important;
+    min-width: 110px !important;
+    max-width: 110px !important;
+}
+
+/* Force right-aligned chevron inside filter triggers */
+.filter-trigger {
+    position: relative !important;
+    padding-right: 2rem !important; /* space for chevron */
+}
+.filter-trigger .filter-chevron {
+    position: absolute !important;
+    right: 0.5rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    pointer-events: none !important;
+    color: #6b7280 !important; /* gray-500 */
+}
+
+/* Force blue, normal-weight link for View Details inside appointments table */
+.appointments-table .appointments-view-link {
+    color: #1466b8 !important;
+    font-weight: 500 !important;
+    font-family: "Poppins", sans-serif !important;
+    text-decoration: underline !important;
+    text-underline-offset: 2px !important;
+    text-decoration-thickness: 1.7px !important; /* slimmer underline */
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    letter-spacing: -0.005em !important; /* tiny tighten for perceived weight */
+    -webkit-text-stroke: 0.3px currentColor; /* a touch thicker without using 600 */
+    font-synthesis-weight: none !important; /* prevent browser from faking bold */
+}
+.appointments-table .appointments-view-link:hover {
+    color: #125aa3 !important;
+}
+
+/* Force white background for admin toolbar controls on initial load */
+.admin-filter-trigger:not(:hover):not(:focus),
+[data-slot="select-trigger"]:not(:hover):not(:focus),
+[data-slot="input"]:not(:hover):not(:focus) {
+    background-color: #ffffff !important;
+}
+
+/* Remove dark focus ring/border when elements regain focus after navigation */
+.admin-filter-trigger:focus,
+.admin-filter-trigger:focus-visible,
+[data-slot="select-trigger"]:active,
+[data-slot="input"]:active,
+.admin-filter-trigger:active,
+.admin-filter-trigger:focus-within,
+[data-slot="select-trigger"]:focus-within,
+[data-slot="input"]:focus-within,
+[data-slot="select-trigger"]:focus,
+[data-slot="select-trigger"]:focus-visible,
+[data-slot="input"]:focus,
+[data-slot="input"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important; /* kills tailwind ring shadow */
+    outline-color: transparent !important;
+    border-color: #d1d5db !important; /* gray-300 to match default */
+}
+
+/* Also neutralize Radix open/closed states that might recolor borders */
+[data-slot="select-trigger"][data-state="open"],
+[data-slot="select-trigger"][data-state="closed"],
+.admin-filter-trigger[data-state="open"],
+.admin-filter-trigger[data-state="closed"] {
+    border-color: #d1d5db !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Prevent UA default focus styles entirely */
+.admin-filter-trigger,
+[data-slot="select-trigger"],
+[data-slot="input"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Outlined nav/date buttons in toolbar should start white */
+.admin-toolbar-white,
+.admin-toolbar-white:hover {
+    background-color: #ffffff !important;
+}
+
+/* Increase vertical padding for table body cells (not headers) */
+.appointments-table tbody td {
+    padding-top: 1.5rem !important; /* 20px */
+    padding-bottom: 1.5rem !important; /* 20px */
+}
+
+/* Fixed column widths and text truncation */
+.appointments-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+    min-width: 1100px !important; /* ensure horizontal scroll instead of layout break on small screens */
+}
+.appointments-table th,
+.appointments-table td {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+}
+/* Column widths: 1=Date, 2=Customer, 3=Service, 4=Barber, 5=Status, 6=View */
+/* Evenly distribute width across all 6 columns and truncate */
+.appointments-table th,
+.appointments-table td {
+    width: calc(100% / 6) !important;
+    max-width: none !important;
+}
+/* Make View and Status columns just wide enough and keep total at 100% */
+.appointments-table th:nth-child(6),
+.appointments-table td:nth-child(6) {
+    width: 12% !important;
+}
+.appointments-table th:nth-child(5),
+.appointments-table td:nth-child(5) {
+    width: 17% !important;
+    min-width: 140px !important;
+}
+.appointments-table th:nth-child(1),
+.appointments-table td:nth-child(1) {
+    width: 16.5% !important;
+}
+.appointments-table th:nth-child(2),
+.appointments-table td:nth-child(2) {
+    width: 17.5% !important;
+}
+.appointments-table th:nth-child(3),
+.appointments-table td:nth-child(3) {
+    width: 18.5% !important;
+}
+.appointments-table th:nth-child(4),
+.appointments-table td:nth-child(4) {
+    width: 15.5% !important;
+}
+/* Ensure first and last columns also truncate */
+.appointments-table th:nth-child(1),
+.appointments-table td:nth-child(1),
+.appointments-table th:nth-child(6),
+.appointments-table td:nth-child(6) {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 /* Make sure alert dialog overlays/content are above everything */
 [data-slot="alert-dialog-overlay"] {
-  z-index: 9998 !important;
+    z-index: 9998 !important;
 }
 [data-slot="alert-dialog-content"] {
-  z-index: 9999 !important;
+    z-index: 9999 !important;
 }
 
 body {
-  width: 100%;
-  max-width: 100vw;
+    width: 100%;
+    max-width: 100vw;
+}
+
+/* Cancel button custom palette */
+.btn-cancel {
+    background-color: #f5e5e8 !important;
+    color: #dc3545 !important;
+    border-color: #f5e5e8 !important;
+    transition: background-color 150ms ease, border-color 150ms ease,
+        box-shadow 150ms ease !important;
+}
+.btn-cancel:hover {
+    background-color: #f2dbdf !important; /* stronger hover tint */
+    border-color: #f29099 !important; /* slim border same as text */
+    border-width: 1px !important;
+}
+.btn-cancel:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important; /* subtler focus */
 }
 
 /* Responsive visibility helpers for 1024px breakpoint */
 .show-lg {
-  display: none;
+    display: none;
 }
 
 .hide-lg {
-  display: block;
+    display: block;
 }
 
 @media (min-width: 1024px) {
-  .show-lg {
-    display: flex; /* matches desktop nav container layout */
-  }
-  .hide-lg {
+    .show-lg {
+        display: flex; /* matches desktop nav container layout */
+    }
+    .hide-lg {
+        display: none;
+    }
+}
+
+/* Mobile menu button and admin sidebar responsive rules (900px breakpoint) */
+.mobile-menu-btn {
     display: none;
-  }
+    position: absolute;
+    left: 24px; /* align with page content padding */
+    top: 24px; /* align vertically with page title */
+    z-index: 10020;
+    background: transparent; /* no background */
+    border: none; /* no border */
+    padding: 2px 0px;
+    border-radius: 6px;
+    box-shadow: none;
+    color: inherit;
+    font-size: 30px; /* larger menu icon */
+    line-height: 1;
+}
+
+@media (max-width: 900px) {
+    .mobile-menu-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        /* ensure it doesn't visually overlap with sidebar when opened (it is hidden when sidebar open) */
+    }
+}
+
+/* When menu button is present, shift only page headers (h1/h2) to make room */
+.mobile-has-menu h1,
+.mobile-has-menu h2,
+.mobile-has-menu h1 + p,
+.mobile-has-menu h2 + p {
+    margin-left: 50px !important;
+}
+
+/* Hide page description on very small screens (<768px) */
+@media (max-width: 767px) {
+    .min-h-screen h1 + p,
+    .min-h-screen h2 + p {
+        display: none !important;
+    }
+}
+
+/* Messages responsive behavior under 820px */
+@media (max-width: 820px) {
+    /* make the messages grid a single column so the list takes full width */
+    .messages-container {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        max-width: 100% !important; /* allow full bleed on mobile */
+    }
+    .messages-container.detail-open {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+    .messages-container .messages-list,
+    .messages-container .messages-filters,
+    .messages-container .messages-search {
+        width: 100% !important;
+    }
+
+    .messages-container .messages-detail {
+        display: none !important;
+    }
+
+    /* show profile/avatar in the detail pane on small screens */
+    .messages-container .messages-detail .rounded-full,
+    .messages-detail-fullscreen .rounded-full {
+        display: inline-flex !important;
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+    }
+
+    /* ensure any img inside the avatar fits the 50x50 container */
+    .messages-container .messages-detail .rounded-full img,
+    .messages-detail-fullscreen .rounded-full img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 50% !important;
+    }
+
+    /* when detail is opened, hide the list and controls and show full-screen detail */
+    .messages-container.detail-open .messages-list,
+    .messages-container.detail-open .messages-filters,
+    .messages-container.detail-open .messages-search,
+    .messages-container.detail-open #messagesListScroll {
+        display: none !important;
+    }
+
+    .messages-container.detail-open .messages-detail,
+    .messages-detail-fullscreen {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        inset: 0 !important;
+        height: 100vh !important; /* occupy full viewport height */
+        background: var(--color-card, #fff) !important;
+        z-index: 10030 !important;
+        overflow: hidden !important; /* prevent outer scrolling */
+        padding: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* position header relatively so the back button can align inside it */
+    .messages-detail-fullscreen .message-header-responsive {
+        position: relative !important;
+    }
+
+    .messages-detail-fullscreen .back-btn {
+        position: absolute;
+        left: -5px;
+        top: 38%; /* center vertically inside the header */
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        z-index: 10040;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0 !important; /* removed padding per request */
+    }
+
+    .messages-detail-fullscreen .back-btn svg {
+        width: 28px;
+        height: 28px;
+        color: #9ca3b0; /* updated to requested color */
+    }
+
+    /* Hide back button by default (show only on narrow screens) */
+    .messages-detail-fullscreen .back-btn {
+        display: none !important;
+    }
+
+    /* show back button only for small screens */
+    @media (max-width: 820px) {
+        /* stack header name and date vertically (one above the other) */
+        .messages-detail-fullscreen .message-header-responsive > .flex {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+        }
+
+        /* remove extra padding/margin around the date and place it under the sender name */
+        .messages-container.detail-open .messages-detail .message-date,
+        .messages-detail-fullscreen .message-date {
+            padding: 0 !important;
+            margin: 0 !important;
+            align-self: flex-start !important;
+            margin-top: 2px !important;
+        }
+        .messages-detail-fullscreen .back-btn {
+            display: block !important;
+        }
+        /* align the name to the top of the avatar */
+        .messages-detail-fullscreen .message-header-responsive > .flex {
+            align-items: flex-start !important;
+        }
+        .messages-detail-fullscreen .message-header-responsive .min-w-0 {
+            align-self: flex-start !important;
+        }
+    }
+
+    /* ensure no padding or margin remains for date in detail header on small screens */
+    .messages-container.detail-open .messages-detail .message-date,
+    .messages-detail-fullscreen .message-date {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* adjust detail header padding on small screens (remove top padding) */
+    .messages-container.detail-open .messages-detail .message-header-responsive,
+    .messages-detail-fullscreen .message-header-responsive {
+        padding: 0rem 0rem 1rem 2rem !important; /* top padding removed for <820px */
+    }
+
+    /* inner detail content: use flex to fill remaining space and scroll internally */
+    .messages-detail-fullscreen .flex-1 {
+        flex: 1 1 auto !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        box-sizing: border-box !important;
+        padding-bottom: 16px !important;
+    }
+
+    /* show only one line for message preview and limit its width on small screens */
+    #messagesListScroll .message-row p {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 65vw !important; /* preview width cap on small screens */
+    }
+
+    @media (max-width: 550px) {
+        #messagesListScroll .message-row p {
+            max-width: 50vw !important; /* smaller preview cap for very small screens */
+        }
+    }
+
+    @media (max-width: 380px) {
+        #messagesListScroll .message-row p {
+            max-width: 35vw !important; /* smaller preview cap for very small screens */
+        }
+    }
+
+    /* ensure message title truncates and doesn't push layout; limit width on small screens */
+    @media (max-width: 450px) {
+        #messagesListScroll .message-row h3 {
+            max-width: 50vw !important; /* cap sender name width on small screens */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+    }
+
+    @media (max-width: 430px) {
+        #messagesListScroll .message-row h3 {
+            max-width: 45vw !important; /* cap sender name width on small screens */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+    }
+
+    @media (max-width: 365px) {
+        #messagesListScroll .message-row h3 {
+            max-width: 38vw !important; /* cap sender name width on small screens */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+    }
+
+    /* For very small screens, cap the detail header name to 200px and show ellipsis */
+    @media (max-width: 520px) {
+        .messages-detail-fullscreen .message-header-responsive .text-lg {
+            max-width: 50vw !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+    }
+
+    /* Very small screens: constrain the header name to 20vw */
+    @media (max-width: 465px) {
+        .messages-detail-fullscreen .message-header-responsive .text-lg {
+            max-width: 45vw !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+    }
+
+    @media (max-width: 425px) {
+        .messages-detail-fullscreen .message-header-responsive .text-lg {
+            max-width: 40vw !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .messages-detail-fullscreen .message-header-responsive .text-lg {
+            max-width: 35vw !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .messages-detail-fullscreen .message-header-responsive .text-lg {
+            max-width: 30vw !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+    }
+}
+
+/* Reschedule button hover (background-only change) */
+.btn-reschedule {
+    background-color: #e2e4e8 !important; /* gray-200 */
+    color: #111827 !important; /* gray-900 */
+    border-color: #e5e7eb !important;
+    transition: background-color 150ms ease, border-color 150ms ease !important;
+}
+.btn-reschedule:hover {
+    background-color: #d1d5db !important; /* gray-300 */
+    border-color: #d1d5db !important;
+    color: #111827 !important; /* keep text black */
 }
 
 /* Force a reliable 4-column grid for time slots regardless of other overrides */
 .time-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 0.75rem; /* ~12px, matches gap-3 */
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.75rem; /* ~12px, matches gap-3 */
 }
 
 /* DayPicker: ensure filler (outside) and disabled days never show hover */
@@ -421,16 +920,16 @@ body {
 .rdp-outside,
 .rdp-day_disabled,
 .rdp-disabled {
-  color: var(--muted-foreground) !important;
-  opacity: 0.6;
-  pointer-events: none;
+    color: var(--muted-foreground) !important;
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .rdp-day_outside:hover,
 .rdp-outside:hover,
 .rdp-day_disabled:hover,
 .rdp-disabled:hover {
-  background-color: transparent !important;
+    background-color: transparent !important;
 }
 
 /* Scoped overrides within BookingFlow calendar container for maximum reliability */
@@ -443,8 +942,8 @@ body {
 .calendar-scope .rdp-outside *,
 .calendar-scope .rdp-day_disabled *,
 .calendar-scope .rdp-disabled * {
-  color: #DDDDDD !important;
-  opacity: 1 !important; /* ensure color shows as intended */
+    color: #dddddd !important;
+    opacity: 1 !important; /* ensure color shows as intended */
 }
 
 /* Utility classes applied via DayPicker modifiersClassNames */
@@ -452,8 +951,8 @@ body {
 .calendar-scope .outside-gray *,
 .calendar-scope .disabled-gray,
 .calendar-scope .disabled-gray * {
-  color: #DDDDDD !important;
-  opacity: 1 !important;
+    color: #dddddd !important;
+    opacity: 1 !important;
 }
 
 /* Target the DayPicker day button directly to override buttonVariants color */
@@ -465,30 +964,464 @@ body {
 .calendar-scope button.rdp-day_disabled,
 .calendar-scope .rdp-day[aria-disabled="true"],
 .calendar-scope button[aria-disabled="true"] {
-  color: #DDDDDD !important;
+    color: #dddddd !important;
+}
+
+/* Block Time Date Picker - outside days color */
+/* Block-time specific styles removed to avoid conflicts with Block Time date picker component; picker will use component-scoped inline styles. */
+
+/* Availability date-picker: style outside (prev/next month) days */
+.availability-date-picker .rdp-day_outside,
+.availability-date-picker .rdp-outside,
+.availability-date-picker .rdp-day.rdp-day_outside,
+.availability-date-picker button.rdp-day_outside {
+    color: #dddddd !important;
+    opacity: 1 !important;
+}
+
+/* support portaled calendar: provide standalone classes applied by DayPicker */
+.availability-outside {
+    color: #dddddd !important;
+    opacity: 1 !important;
+}
+
+/* Make prev/next-month days non-interactive (not selectable) */
+.availability-outside,
+.availability-outside button,
+.availability-outside * {
+    pointer-events: none !important;
+    cursor: default !important;
+    opacity: 0.6 !important;
+}
+
+/* Ensure adding borders on hover doesn't shift layout: reserve transparent border by default */
+.availability-day,
+button.availability-day,
+.rdp-day.availability-day,
+.availability-today,
+button.availability-today,
+.rdp-day.availability-today {
+    box-sizing: border-box !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+}
+
+/* Make each date container a square and center its content */
+.availability-day,
+button.availability-day,
+.rdp-day.availability-day,
+.availability-today,
+button.availability-today,
+.rdp-day.availability-today {
+    width: 30px !important;
+    height: 30px !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    margin: 2px !important; /* small gap between cells */
+}
+
+/* Stronger, availability-scoped rules to force button sizing despite other rdp rules */
+.availability-calendar button.availability-day.rdp-button,
+.availability-calendar button.availability-day.rdp-button_reset,
+.availability-calendar .rdp-day.availability-day {
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+}
+
+/* Allow day buttons to size independently inside the availability calendar (override rdp-day width:100%) */
+.availability-calendar .rdp-day {
+    width: auto !important;
+}
+
+/* Make the calendar table shrinkwrap its content so day buttons control sizing */
+.availability-calendar table,
+.availability-calendar .rdp {
+    width: auto !important;
+    margin: 0 auto !important;
+}
+
+.availability-calendar .rdp-row {
+    justify-content: center !important;
+}
+
+.availability-calendar .rdp-cell {
+    width: auto !important;
+}
+
+/* Style blocked/disabled days in availability calendar to look clearly unavailable */
+.availability-calendar button[aria-disabled="true"],
+.availability-calendar .rdp-day[aria-disabled="true"] {
+    color: #d1d5db !important;
+    background: transparent !important;
+    pointer-events: none !important;
+    opacity: 0.6 !important;
+    border-color: transparent !important;
+}
+
+/* Prevent any hover effects when a day is disabled (including parent cell hover) */
+.availability-calendar button[aria-disabled="true"]:hover,
+.availability-calendar .rdp-day[aria-disabled="true"]:hover,
+.availability-calendar td:has(button[aria-disabled=\"true\"]):hover,
+.availability-calendar .rdp-cell:has(button[aria-disabled=\"true\"]):hover {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+    box-shadow: none !important;
+}
+
+/* Stronger overrides targeting DayPicker internals and utility classes to fully disable hover */
+.availability-calendar .rdp-day[aria-disabled="true"],
+.availability-calendar button.rdp-day[aria-disabled="true"],
+.availability-calendar .rdp-day[aria-disabled="true"] *,
+.availability-calendar button.rdp-day[aria-disabled="true"] * {
+    pointer-events: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    color: #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+}
+
+.availability-calendar .rdp-day[aria-disabled="true"]:hover,
+.availability-calendar button.rdp-day[aria-disabled="true"]:hover,
+.availability-calendar .rdp-day[aria-disabled="true"] *:hover,
+.availability-calendar button.rdp-day[aria-disabled="true"] *:hover,
+.availability-calendar td:has(.rdp-day[aria-disabled=\"true\"]):hover,
+.availability-calendar .rdp-cell:has(.rdp-day[aria-disabled=\"true\"]):hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+}
+
+/* Fallback class applied by JS: fully disable hover/interaction on blocked cells/buttons */
+.availability-calendar .availability-blocked,
+.availability-calendar .availability-blocked * {
+    pointer-events: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    color: #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+}
+
+.availability-calendar td:has(.availability-blocked):hover,
+.availability-calendar .rdp-cell:has(.availability-blocked):hover {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* When a blocked day is (attempted) selected by DayPicker, force it to look disabled/not-selected */
+.availability-calendar .availability-blocked[aria-selected="true"],
+.availability-calendar .availability-blocked.availability-selected,
+.availability-calendar .availability-blocked.day_range_start,
+.availability-calendar .availability-blocked.day_range_middle,
+.availability-calendar .availability-blocked.day_range_end {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    color: #d1d5db !important;
+    opacity: 0.6 !important;
+    cursor: default !important;
+}
+
+/* Prevent parent cell from showing selected background when it contains a blocked day */
+.availability-calendar
+    .rdp-cell:has(.availability-blocked[aria-selected="true"]),
+.availability-calendar td:has(.availability-blocked[aria-selected="true"]) {
+    background: transparent !important;
+}
+
+/* Remove hover/focus effects on month navigation buttons inside availability picker */
+.availability-calendar .rdp-nav_button:hover,
+.availability-calendar .rdp-nav_button:focus,
+.availability-calendar .rdp-nav_button:active,
+.availability-calendar .cal-nav-btn:hover,
+.availability-calendar .cal-nav-btn:focus,
+.availability-calendar .cal-nav-btn:active {
+    background-color: #f3f4f6 !important; /* light gray */
+    opacity: 1 !important;
+    color: inherit !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Additional aggressive overrides to catch utility classes on the nav arrows */
+.availability-calendar button[aria-label="Go to next month"]:hover,
+.availability-calendar button[aria-label="Go to previous month"]:hover,
+.availability-calendar button.rdp-button:hover,
+.availability-calendar button.rdp-button_reset:hover,
+.availability-calendar button[class*="hover:bg-"]:hover {
+    background-color: #f3f4f6 !important;
+    background: #f3f4f6 !important;
+    color: inherit !important;
+    opacity: 1 !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Disabled nav arrows: lighter gray when they can't advance further */
+.availability-calendar button[aria-label="Go to next month"]:disabled,
+.availability-calendar button[aria-label="Go to previous month"]:disabled,
+.availability-calendar .cal-nav-btn:disabled,
+.availability-calendar .rdp-nav_button:disabled {
+    color: #e9e9e7 !important;
+    opacity: 1 !important;
+}
+.availability-calendar button[aria-label="Go to next month"]:disabled svg,
+.availability-calendar button[aria-label="Go to previous month"]:disabled svg,
+.availability-calendar .cal-nav-btn:disabled svg,
+.availability-calendar .rdp-nav_button:disabled svg {
+    stroke: #e9e9e7 !important;
+    fill: #e9e9e7 !important;
+}
+
+/* Evenly space weekday header labels inside the availability calendar */
+.availability-calendar .rdp-head_row,
+.availability-calendar .rdp-week {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    column-gap: 4px !important; /* match date cell horizontal gap (2px margin each -> 4px) */
+    align-items: center !important;
+}
+
+.availability-calendar .rdp-head_cell,
+.availability-calendar .rdp-weekday,
+.availability-calendar .rdp-weekday_name {
+    justify-self: center !important;
+    text-align: center !important;
+    padding: 0 !important;
+}
+
+/* Override flex-based header row (some resets apply display:flex) */
+.availability-calendar thead.rdp-head tr,
+.availability-calendar thead.rdp-head .flex,
+.availability-calendar thead.rdp-head .rdp-head_row {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    column-gap: 4px !important;
+    align-items: center !important;
+}
+
+/* Hover effect for all days in availability picker */
+.availability-day:hover,
+button.availability-day:hover,
+.rdp-day.availability-day:hover {
+    background-color: #1d4fd814 !important;
+    border: 1px solid #1d4ed8 !important;
+    color: #000000 !important;
+}
+
+.availability-today,
+button.availability-today,
+.rdp-day.availability-today {
+    background-color: transparent !important;
+    border: 1px solid #1d4ed8 !important;
+    color: inherit !important;
+}
+
+.availability-today:hover,
+button.availability-today:hover,
+.rdp-day.availability-today:hover {
+    background-color: #2664ec !important;
+    border-color: #2664ec !important;
+    color: #ffffff !important;
+}
+
+/* Selected date: black background, no border */
+.availability-day.rdp-day_selected,
+button.availability-day.rdp-day_selected,
+.rdp-day.availability-day.rdp-day_selected,
+.availability-today.rdp-day_selected,
+button.availability-today.rdp-day_selected,
+.rdp-day.availability-today.rdp-day_selected {
+    background-color: #000000 !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+/* Disable hover effects for any selected day so it doesn't change on hover */
+.availability-selected:hover,
+button.availability-selected:hover,
+.rdp-day.availability-selected:hover,
+.rdp-day_selected:hover,
+button[aria-selected="true"]:hover,
+.availability-day[aria-selected="true"]:hover {
+    background-color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    cursor: default !important;
+}
+
+/* Extra-high-specificity overrides to completely disable hover visuals on selected days */
+.availability-calendar
+    button.rdp-button.availability-day.availability-selected:hover,
+.availability-calendar
+    button.rdp-button.availability-day[aria-selected="true"]:hover,
+.availability-calendar button.availability-day.availability-selected:hover,
+.availability-calendar button.availability-day[aria-selected="true"]:hover,
+.availability-calendar .availability-selected:hover,
+.availability-calendar .rdp-day.rdp-day_selected:hover {
+    background-color: #000000 !important;
+    background-image: none !important;
+    background: #000000 !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    color: #ffffff !important;
+}
+
+/* Also ensure SVG/icon doesn't change color on hover */
+.availability-calendar
+    button.rdp-button.availability-day.availability-selected:hover
+    svg,
+.availability-calendar button.availability-day[aria-selected="true"]:hover svg {
+    stroke: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Fallback: ensure any DayPicker selected cell shows black background/no border */
+.rdp-day_selected,
+.rdp-day.rdp-day_selected,
+button.rdp-day_selected,
+.rdp-day_selected button {
+    background-color: #000000 !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Aggressive override to remove any residual border/outline from selected day (covers pseudo-elements and descendants) */
+.rdp-day_selected,
+.rdp-day_selected *,
+.rdp-day_selected::before,
+.rdp-day_selected::after,
+.rdp-day.rdp-day_selected,
+.rdp-day.rdp-day_selected *,
+.rdp-day.rdp-day_selected::before,
+.rdp-day.rdp-day_selected::after,
+button.rdp-day_selected,
+button.rdp-day_selected *,
+button.rdp-day_selected::before,
+button.rdp-day_selected::after {
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Target elements that use aria-selected instead of selected class (DayPicker uses aria-selected="true") */
+button.availability-day[aria-selected="true"],
+.rdp-day[aria-selected="true"],
+button[aria-selected="true"],
+.availability-day.bg-primary[aria-selected="true"],
+.bg-primary[aria-selected="true"] {
+    background-color: #000000 !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #ffffff !important;
+}
+
+/* Explicit class applied by DayPicker for selected day */
+.availability-selected,
+button.availability-selected,
+.rdp-day.availability-selected {
+    background-color: #000000 !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #ffffff !important;
+}
+
+/* Ensure the cell container that wraps the selected day also shows black and no border */
+.availability-calendar .rdp-cell:has(.availability-selected),
+.availability-calendar td:has(.availability-selected) {
+    background-color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Very specific selector to override theme utility classes on the selected day */
+button.rdp-button.rdp-button_reset.availability-day.bg-primary.text-primary-foreground[aria-selected="true"],
+button.rdp-button.availability-day.bg-primary.text-primary-foreground[aria-selected="true"],
+button.availability-day.bg-primary[aria-selected="true"],
+.rdp-button.availability-day.bg-primary[aria-selected="true"] {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    border: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #ffffff !important;
+}
+
+/* Today's day styling: blue border by default, blue bg on hover (scoped + higher specificity) */
+.availability-date-picker .rdp-day_today,
+.availability-date-picker button.rdp-day_today,
+.availability-date-picker .rdp-day.rdp-day_today,
+.availability-date-picker .calendar-scope .rdp-day_today,
+.availability-date-picker .calendar-scope button.rdp-day_today,
+.availability-date-picker .calendar-scope .rdp-day.rdp-day_today {
+    background-color: transparent !important;
+    border: 1px solid #2664ec !important;
+    color: inherit !important;
+}
+
+.availability-date-picker .rdp-day_today:hover,
+.availability-date-picker button.rdp-day_today:hover,
+.availability-date-picker .rdp-day.rdp-day_today:hover,
+.availability-date-picker .calendar-scope .rdp-day_today:hover,
+.availability-date-picker .calendar-scope button.rdp-day_today:hover,
+.availability-date-picker .calendar-scope .rdp-day.rdp-day_today:hover {
+    background-color: #2664ec !important;
+    border-color: #2664ec !important;
+    color: #ffffff !important;
 }
 
 /* Enforce square day buttons with centered content */
 .calendar-scope .rdp-row {
-  gap: 0.5rem; /* matches gap-2 */
+    gap: 0.5rem; /* matches gap-2 */
 }
 
 .calendar-scope .rdp-cell {
-  padding: 0 !important;
+    padding: 0 !important;
 }
 
 .calendar-scope .rdp-day {
-  width: 100% !important;
-  aspect-ratio: 1 / 1 !important;
-  display: grid !important;
-  place-items: center !important;
-  padding: 0 !important;
-  line-height: 1 !important;
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    line-height: 1 !important;
 }
 
 /* Today's cell background */
 .calendar-scope .rdp-day_today {
-  background-color: #F4F0E9 !important;
+    background-color: #f4f0e9 !important;
 }
 
 /* Simple calendar day hover - match time slots exactly */
@@ -496,63 +1429,272 @@ body {
 
 /* Strong hover for time slots (enabled, unselected) */
 .time-grid button:not(:disabled):not(.bg-foreground):hover {
-  background-color: #f7f1e8 !important;
-  border-color: #C9A961 !important;
+    background-color: #f7f1e8 !important;
+    border-color: #c9a961 !important;
 }
 
 /* Month navigation buttons hover: use currentColor so icon stays original shape */
 .calendar-scope .cal-nav-btn:hover {
-  color: #C9A961 !important;
-  border-color: #C9A961 !important;
-  background-color: transparent !important;
-  opacity: 1 !important;
+    color: #c9a961 !important;
+    border-color: #c9a961 !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
 }
 
 /* Disabled state for month navigation buttons (current/next month limits) */
 .calendar-scope .cal-nav-btn:disabled,
 .calendar-scope .cal-nav-btn[aria-disabled="true"] {
-  color: #E5E2DA !important;
-  border-color: #E5E2DA !important;
-  background-color: transparent !important;
-  pointer-events: none !important;
-  cursor: default !important;
-  opacity: 1 !important; /* keep consistent tone */
+    color: #e5e2da !important;
+    border-color: #e5e2da !important;
+    background-color: transparent !important;
+    pointer-events: none !important;
+    cursor: default !important;
+    opacity: 1 !important; /* keep consistent tone */
 }
-
-
 
 /* Prevent hover styles from affecting disabled nav buttons */
 .calendar-scope .cal-nav-btn:disabled:hover,
 .calendar-scope .cal-nav-btn[aria-disabled="true"]:hover {
-  color: #E5E2DA !important;
-  border-color: #E5E2DA !important;
-  background-color: transparent !important;
+    color: #e5e2da !important;
+    border-color: #e5e2da !important;
+    background-color: transparent !important;
+}
+
+/* Barber cards responsive sizing: keep gap fixed and wrap cards */
+.barber-row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 24px !important; /* matches gap-6 */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.barber-row > * {
+    width: 100% !important;
+}
+
+/* Stack barber cards on very small screens (<=370px) */
+@media (max-width: 370px) {
+    .barber-row {
+        grid-template-columns: 1fr !important; /* stack cards vertically */
+    }
+    .barber-row > * {
+        width: 100% !important;
+    }
+}
+
+/* Stack stats cards vertically on very small screens */
+@media (max-width: 410px) {
+    .service-stats {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+    }
+    .service-stats > div {
+        border-right: none !important;
+        border-bottom: 1px solid #e5e7eb !important;
+        display: flex !important;
+        flex-direction: row !important; /* ensure label and number sit side-by-side */
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    /* Remove the inline margin that pushes the number below the label */
+    .service-stats > div > div:nth-child(2) {
+        margin-top: 0 !important;
+        text-align: right !important;
+    }
+    .service-stats > div:last-child {
+        border-bottom: none !important;
+    }
+}
+
+/* Button text swap for narrow screens: show short text only */
+.btn-text-short {
+    display: none !important;
+}
+.btn-text-full {
+    display: inline !important;
+}
+
+@media (max-width: 450px) {
+    .btn-text-full {
+        display: none !important;
+    }
+    .btn-text-short {
+        display: inline !important;
+    }
+    /* remove right margin on icon when using short text to keep spacing neat */
+    .admin-primary-btn .h-4.mr-2 {
+        margin-right: 0.5rem !important;
+    }
 }
 
 /* Booking progress stepper responsive visibility */
-.booking-stepper-mobile { display: block !important; }
-.booking-stepper-desktop { display: none !important; }
+.booking-stepper-mobile {
+    display: block !important;
+}
+.booking-stepper-desktop {
+    display: none !important;
+}
 @media (min-width: 601px) {
-  .booking-stepper-mobile { display: none !important; }
-  .booking-stepper-desktop { display: block !important; }
+    .booking-stepper-mobile {
+        display: none !important;
+    }
+    .booking-stepper-desktop {
+        display: block !important;
+    }
 }
 
 /* Navbar underline animation (left -> right, color = current text color) */
 .nav-link {
-  position: relative;
-  display: inline-block; /* ensure pseudo-element positions relative to link box */
-  padding-bottom: 2px; /* space for underline */
+    position: relative;
+    display: inline-block; /* ensure pseudo-element positions relative to link box */
+    padding-bottom: 2px; /* space for underline */
 }
 .nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0; /* sit exactly at text bottom */
-  height: 1px;
-  width: 0;
-  background-color: currentColor;
-  transition: width 250ms ease;
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0; /* sit exactly at text bottom */
+    height: 1px;
+    width: 0;
+    background-color: currentColor;
+    transition: width 250ms ease;
 }
 .nav-link:hover::after {
-  width: 100%;
+    width: 100%;
+}
+
+/* Barber dialog input placeholders */
+.barber-dialog-input::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+}
+
+/* Ensure underlined spans inside dialog inputs show correctly (override resets) */
+.barber-dialog-input .underline,
+.barber-dialog-input .underline * {
+    text-decoration: underline !important;
+    text-underline-offset: 2px !important;
+    text-decoration-thickness: 1.3px !important;
+}
+
+/* Barber dialog input background */
+input.barber-dialog-input {
+    background-color: #f9fafb !important;
+}
+
+input.barber-dialog-input:focus,
+input.barber-dialog-input:focus-visible {
+    background-color: #f9fafb !important;
+}
+
+/* Hide clock icon and make time input fully clickable */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+input[type="time"] {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Start/End labels for time slots: hidden on small screens, visible above 450px */
+.start-end-label {
+    display: none;
+}
+
+@media (min-width: 505px) {
+    .start-end-label {
+        display: inline-block;
+    }
+}
+
+/* Reduce horizontal padding for schedule time grid on very small screens */
+@media (max-width: 377px) {
+    .schedule-time-grid {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+}
+
+/* Default padding for schedule time grid */
+.schedule-time-grid {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+/* Make readonly time input text non-selectable */
+.barber-dialog-input[readonly],
+input.barber-dialog-input[readonly] {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    caret-color: transparent !important;
+}
+
+/* Hover/focus: change border color (no background change) for time inputs inside schedule grid */
+.schedule-time-grid .barber-dialog-input:hover,
+.schedule-time-grid .barber-dialog-input:focus,
+.schedule-time-grid .barber-dialog-input:focus-visible {
+    background-color: #ffffff !important;
+    border-color: #b6bcc7 !important;
+    box-shadow: none !important;
+}
+
+/* Remove default focus ring on mouse interaction; show custom border on keyboard focus-visible */
+.timepicker-select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Hover shows custom border, keyboard focus-visible also shows custom border; keep native arrows */
+.timepicker-select:hover,
+.timepicker-select:focus-visible {
+    background-color: #ffffff !important;
+    /* draw a 1px inset stroke so element size doesn't change */
+    box-shadow: inset 0 0 0 1px #dee0e2 !important;
+    outline: none !important;
+    border-radius: 6px !important;
+}
+
+/* Barber dialog scroll container: remove outer borders and customize scrollbar */
+.barber-dialog-scroll {
+    border: none !important;
+    background-clip: padding-box !important;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #777a8186 transparent; /* thumb track */
+}
+.barber-dialog-scroll::-webkit-scrollbar {
+    width: 10px;
+}
+.barber-dialog-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.barber-dialog-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.35);
+    border-radius: 999px;
+    border: 2px solid transparent; /* create padding effect */
+    background-clip: padding-box;
+}
+
+/* Ensure hour/minute selects have extra right padding so value and arrow don't overlap */
+.timepicker-select {
+    /* hide native arrow and draw a custom arrow inset from the right border */
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    padding-left: 6px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20'><path fill='%236B7280' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.06z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 6px center !important; /* arrow inset 12px from right border */
+    background-size: 15px 15px !important;
 }

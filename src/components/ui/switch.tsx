@@ -6,26 +6,52 @@ import * as SwitchPrimitive from "@radix-ui/react-switch@1.1.3";
 import { cn } from "./utils";
 
 function Switch({
-  className,
-  ...props
+    className,
+    ...props
 }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
-  return (
-    <SwitchPrimitive.Root
-      data-slot="switch"
-      className={cn(
-        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-switch-background focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
-      {...props}
-    >
-      <SwitchPrimitive.Thumb
-        data-slot="switch-thumb"
-        className={cn(
-          "bg-card dark:data-[state=unchecked]:bg-card-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0",
-        )}
-      />
-    </SwitchPrimitive.Root>
-  );
+    const [checked, setChecked] = React.useState(props.checked || false);
+
+    React.useEffect(() => {
+        setChecked(props.checked || false);
+    }, [props.checked]);
+
+    return (
+        <SwitchPrimitive.Root
+            data-slot="switch"
+            {...props}
+            style={{
+                position: "relative",
+                display: "inline-flex",
+                height: "18px",
+                width: "38px",
+                flexShrink: 0,
+                alignItems: "center",
+                borderRadius: "9px",
+                transition: "background-color 0.2s",
+                outline: "none",
+                cursor: "pointer",
+                backgroundColor: checked ? "#2663EB" : "#D1D5DB",
+                padding: "2px",
+            }}
+            className={cn(
+                "focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                className
+            )}>
+            <SwitchPrimitive.Thumb
+                data-slot="switch-thumb"
+                style={{
+                    display: "block",
+                    height: "14px",
+                    width: "14px",
+                    borderRadius: "7px",
+                    backgroundColor: "white",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                    transition: "transform 0.2s ease-in-out",
+                    transform: checked ? "translateX(20px)" : "translateX(0px)",
+                }}
+            />
+        </SwitchPrimitive.Root>
+    );
 }
 
 export { Switch };
