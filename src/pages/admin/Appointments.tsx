@@ -282,7 +282,9 @@ export default function Appointments() {
         if (st === "checked_in") return "Checked In";
         if (st === "no_show") return "No Show";
         if (st === "pending") return "Pending";
+        /* temporarily disable 'confirmed' status
         if (st === "confirmed") return "Confirmed";
+        */
         if (st === "cancelled") return "Cancelled";
         return st
             .split("_")
@@ -297,12 +299,14 @@ export default function Appointments() {
                 borderColor: "#1D4ED8",
                 color: "#1D4ED8",
             };
+        /* temporarily disable 'confirmed' status styles
         if (s === "confirmed")
             return {
                 backgroundColor: "#ECFDF5",
                 borderColor: "#059669",
                 color: "#059669",
             };
+        */
         if (s === "checked_in")
             return {
                 backgroundColor: "#ECFDF5",
@@ -756,6 +760,7 @@ export default function Appointments() {
         }
         return "Service not specified";
     };
+    const todayIso = new Date().toISOString().split("T")[0];
 
     return (
         <div className="p-6 min-h-screen">
@@ -832,6 +837,7 @@ export default function Appointments() {
                             }}>
                             <BookingFlow
                                 appointmentId={newBookingInitialId || undefined}
+                                hideHeader={true}
                                 onClose={() => setShowNewBooking(false)}
                             />
                         </div>
@@ -1952,21 +1958,52 @@ export default function Appointments() {
                             <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
-                            className="admin-primary-btn h-12 px-4 rounded-md text-white"
-                            style={{
-                                backgroundColor: "#1D4ED8",
-                                borderColor: "#1D4ED8",
+                            className={`h-12 px-3 flex items-center gap-2 border border-gray-300 rounded-md ${
+                                selectedDate === todayIso && !showUpcoming
+                                    ? "text-white"
+                                    : "bg-white hover:bg-gray-100 hover:border-gray-300 text-gray-900 hover:text-gray-900"
+                            } today-btn`}
+                            style={
+                                selectedDate === todayIso && !showUpcoming
+                                    ? {
+                                          backgroundColor: " #2663EB",
+                                          borderColor: " #2663EB",
+                                      }
+                                    : { backgroundColor: "#ffffff" }
+                            }
+                            onMouseEnter={(e) => {
+                                if (
+                                    !(
+                                        selectedDate === todayIso &&
+                                        !showUpcoming
+                                    )
+                                ) {
+                                    (
+                                        e.currentTarget as HTMLButtonElement
+                                    ).style.backgroundColor = " #F9FAFB";
+                                }
                             }}
-                            onClick={handleSetToday}
+                            onMouseLeave={(e) => {
+                                if (
+                                    !(
+                                        selectedDate === todayIso &&
+                                        !showUpcoming
+                                    )
+                                ) {
+                                    (
+                                        e.currentTarget as HTMLButtonElement
+                                    ).style.backgroundColor = "#ffffff";
+                                }
+                            }}
+                            onClick={() => {
+                                // when jumping to today, also disable upcoming mode so Today becomes active
+                                if (showUpcoming) setShowUpcoming(false);
+                                handleSetToday();
+                            }}
                             onPointerDown={handleSetToday}
                             aria-label="Jump to today">
-                            <span
-                                style={{
-                                    display: "inline-block",
-                                    width: "100%",
-                                }}>
-                                Today
-                            </span>
+                            <span className="upcoming-full">Today</span>
+                            <span className="upcoming-short">Today</span>
                         </Button>
                         <Button
                             variant="outline"
@@ -2402,6 +2439,7 @@ export default function Appointments() {
                                                               }}>
                                                               Pending
                                                           </div>
+                                                          {/*
                                                           <div
                                                               role="option"
                                                               data-state={
@@ -2428,6 +2466,7 @@ export default function Appointments() {
                                                               }}>
                                                               Confirmed
                                                           </div>
+                                                          */}
                                                           <div
                                                               role="option"
                                                               data-state={
@@ -2908,7 +2947,7 @@ export default function Appointments() {
                                                                                                                         }}>
                                                                                                                         {[
                                                                                                                             "pending",
-                                                                                                                            "confirmed",
+                                                                                                                            // "confirmed", temporarily disabled
                                                                                                                             "checked_in",
                                                                                                                             "cancelled",
                                                                                                                             "no_show",
@@ -2991,7 +3030,7 @@ export default function Appointments() {
                                                                                                                 style={getStatusMenuStyle()}>
                                                                                                                 {[
                                                                                                                     "pending",
-                                                                                                                    "confirmed",
+                                                                                                                    // "confirmed", temporarily disabled
                                                                                                                     "checked_in",
                                                                                                                     "cancelled",
                                                                                                                     "no_show",
@@ -3156,8 +3195,8 @@ export default function Appointments() {
                                                                                         "0% 2px";
                                                                             }}
                                                                             onClick={() =>
-                                                                                navigate(
-                                                                                    `/admin/appointments/${apt.id}`
+                                                                                openDetails(
+                                                                                    apt
                                                                                 )
                                                                             }>
                                                                             <span
@@ -3337,15 +3376,6 @@ export default function Appointments() {
                                                                                   color: " #1D4ED8",
                                                                               }
                                                                             : s ===
-                                                                              "confirmed"
-                                                                            ? {
-                                                                                  backgroundColor:
-                                                                                      "#ECFDF5",
-                                                                                  borderColor:
-                                                                                      "#059669",
-                                                                                  color: "#059669",
-                                                                              }
-                                                                            : s ===
                                                                               "checked_in"
                                                                             ? {
                                                                                   backgroundColor:
@@ -3495,7 +3525,7 @@ export default function Appointments() {
                                                                                                 }}>
                                                                                                 {[
                                                                                                     "pending",
-                                                                                                    "confirmed",
+                                                                                                    // "confirmed", temporarily disabled
                                                                                                     "checked_in",
                                                                                                     "cancelled",
                                                                                                     "no_show",
@@ -3576,7 +3606,7 @@ export default function Appointments() {
                                                                                         style={getStatusMenuStyle()}>
                                                                                         {[
                                                                                             "pending",
-                                                                                            "confirmed",
+                                                                                            // "confirmed", temporarily disabled
                                                                                             "checked_in",
                                                                                             "cancelled",
                                                                                             "no_show",
