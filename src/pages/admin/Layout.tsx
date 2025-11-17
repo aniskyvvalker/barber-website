@@ -153,7 +153,8 @@ export default function AdminLayout() {
     }
 
     const navItems = [
-        { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+        // Temporarily hide Dashboard from the sidebar:
+        // { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
         { name: "Appointments", path: "/admin/appointments", icon: Calendar },
         { name: "Messages", path: "/admin/messages", icon: MessageSquare },
         { name: "Barbers", path: "/admin/barbers", icon: Users },
@@ -280,7 +281,7 @@ export default function AdminLayout() {
 
                 {/* Settings & Logout */}
                 <div className="p-3">
-                    {/* Settings Nav Item */}
+                    {/*
                     <NavLink
                         to="/admin/settings"
                         className={({ isActive }) =>
@@ -322,6 +323,7 @@ export default function AdminLayout() {
                             </>
                         )}
                     </NavLink>
+                    */}
 
                     {/* Logout Item */}
                     <div
