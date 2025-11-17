@@ -470,7 +470,8 @@ html {
 /* Force white background for admin toolbar controls on initial load */
 .admin-filter-trigger:not(:hover):not(:focus),
 [data-slot="select-trigger"]:not(:hover):not(:focus),
-[data-slot="input"]:not(:hover):not(:focus) {
+[data-slot="input"]:not(:hover):not(:focus),
+[data-slot="textarea"]:not(:hover):not(:focus) {
     background-color: #ffffff !important;
 }
 
@@ -479,14 +480,18 @@ html {
 .admin-filter-trigger:focus-visible,
 [data-slot="select-trigger"]:active,
 [data-slot="input"]:active,
+[data-slot="textarea"]:active,
 .admin-filter-trigger:active,
 .admin-filter-trigger:focus-within,
 [data-slot="select-trigger"]:focus-within,
 [data-slot="input"]:focus-within,
+[data-slot="textarea"]:focus-within,
 [data-slot="select-trigger"]:focus,
 [data-slot="select-trigger"]:focus-visible,
 [data-slot="input"]:focus,
-[data-slot="input"]:focus-visible {
+[data-slot="input"]:focus-visible,
+[data-slot="textarea"]:focus,
+[data-slot="textarea"]:focus-visible {
     outline: none !important;
     box-shadow: none !important; /* kills tailwind ring shadow */
     outline-color: transparent !important;
@@ -506,7 +511,8 @@ html {
 /* Prevent UA default focus styles entirely */
 .admin-filter-trigger,
 [data-slot="select-trigger"],
-[data-slot="input"] {
+[data-slot="input"],
+[data-slot="textarea"] {
     appearance: none !important;
     -webkit-appearance: none !important;
 }
