@@ -8,6 +8,35 @@
     color: inherit;
 }
 
+/* On very small screens show only the plus icon for the New Appointment button (match availability) */
+@media (max-width: 370px) {
+    .appointments-new-btn .btn-text-full,
+    .appointments-new-btn .btn-text-short {
+        display: none !important;
+    }
+    .appointments-new-btn {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    /* force svg to center and ignore margin utility like mr-2 */
+    .appointments-new-btn > svg,
+    .appointments-new-btn svg,
+    .appointments-new-btn .h-4.mr-2 {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 20px !important;
+        height: 20px !important;
+        transform: scale(1.25);
+        display: block;
+    }
+}
+
 /* Firefox selection */
 .booking-scope input::-moz-selection,
 .booking-scope textarea::-moz-selection {
@@ -310,6 +339,16 @@ html {
     color: #111827 !important; /* gray-900 */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+    font-size: 14px !important;
+}
+
+/* admin-status-menu position handled per-component to avoid global stacking issues */
+
+.appointments-toolbar .admin-status-menu {
+    position: fixed !important;
+    z-index: 2147483647 !important;
+    left: auto !important;
+    right: auto !important;
 }
 
 .admin-status-menu [role="option"] {
@@ -382,16 +421,17 @@ html {
 
 /* Fixed width for select triggers (filters) */
 .fixed-select-trigger {
-    width: 140px !important;
-    min-width: 140px !important;
-    max-width: 140px !important;
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
 }
 
 /* Narrower status filter trigger only */
 .status-select-trigger {
-    width: 110px !important;
-    min-width: 110px !important;
-    max-width: 110px !important;
+    /* widened to give the Status button more room for longer labels */
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
 }
 
 /* Force right-aligned chevron inside filter triggers */
@@ -469,6 +509,11 @@ html {
 [data-slot="input"] {
     appearance: none !important;
     -webkit-appearance: none !important;
+}
+
+/* Override border color for toolbar select triggers (All Barbers) */
+.admin-filter-trigger.fixed-select-trigger {
+    border-color: #e4e5e3 !important;
 }
 
 /* Outlined nav/date buttons in toolbar should start white */
@@ -1527,6 +1572,16 @@ button.availability-day.bg-primary[aria-selected="true"],
     }
 }
 
+/* Appointments: show short button label at 600px and below */
+@media (max-width: 600px) {
+    .appointments-new-btn .btn-text-full {
+        display: none !important;
+    }
+    .appointments-new-btn .btn-text-short {
+        display: inline !important;
+    }
+}
+
 /* Booking progress stepper responsive visibility */
 .booking-stepper-mobile {
     display: block !important;
@@ -1697,4 +1752,105 @@ input.barber-dialog-input[readonly] {
     background-repeat: no-repeat !important;
     background-position: right 6px center !important; /* arrow inset 12px from right border */
     background-size: 15px 15px !important;
+}
+
+/* Appointments stats: stack columns at 560px and below (matches services/barbers style but different breakpoint) */
+@media (max-width: 560px) {
+    .appointments-stats {
+        grid-template-columns: 1fr !important;
+        display: grid !important;
+    }
+    .appointments-stats > div {
+        border-right: none !important;
+        border-bottom: 1px solid #e5e7eb !important;
+        display: flex !important;
+        flex-direction: row !important; /* ensure label and number sit side-by-side */
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    /* Remove the inline margin that pushes the number below the label */
+    .appointments-stats > div > div:nth-child(2) {
+        margin-top: 0 !important;
+        text-align: right !important;
+    }
+    .appointments-stats > div:last-child {
+        border-bottom: none !important;
+    }
+}
+
+/* Small screens: give the appointment title a left margin */
+@media (max-width: 479px) {
+    .appointment-title {
+        margin-left: 20px !important;
+    }
+}
+
+/* Hide appointment details avatar on very small screens */
+@media (max-width: 449px) {
+    .appointment-avatar {
+        display: none !important;
+    }
+}
+
+/* Stack contact info vertically on very small screens */
+@media (max-width: 449px) {
+    .appointment-contact {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+    .appointment-contact a {
+        white-space: normal !important;
+    }
+}
+
+/* Message box styling inside appointment modal */
+.appointment-message {
+    border: 1px solid #e5e7eb;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+@media (max-width: 449px) {
+    .appointment-message {
+        padding: 10px;
+        border-radius: 6px;
+    }
+}
+
+/* Prevent very long unbroken text from overflowing the message box */
+.appointment-message {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+}
+.appointment-message a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Prevent long unbroken strings in booking review "Your Information" */
+.booking-your-info,
+.booking-your-info p,
+.booking-your-info a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    white-space: normal;
+}
+
+/* Stack the delete confirmation buttons under the warning text on small screens */
+@media (max-width: 700px) {
+    .delete-confirm {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+    .delete-confirm > div:last-child {
+        display: flex !important;
+        gap: 8px !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+    }
 }

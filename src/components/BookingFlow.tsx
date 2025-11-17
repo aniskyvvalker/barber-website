@@ -72,7 +72,13 @@ interface BookingData {
 
 // Services are now fetched from Supabase within the component
 
-export function BookingFlow({ onClose }: { onClose?: () => void }) {
+export function BookingFlow({
+    onClose,
+    appointmentId,
+}: {
+    onClose?: () => void;
+    appointmentId?: string | null;
+}) {
     const [step, setStep] = useState(1);
     const [bookingData, setBookingData] = useState<BookingData>({
         service: null,
@@ -241,6 +247,80 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
 
         fetchBarbers();
     }, []);
+
+    // If an appointmentId is provided, load the appointment and pre-fill bookingData for rescheduling.
+    useEffect(() => {
+        const loadAppointment = async () => {
+            if (!appointmentId) return;
+            try {
+                const { data, error } = await supabase
+                    .from("appointments")
+                    .select("*")
+                    .eq("id", appointmentId)
+                    .single();
+                if (error || !data) {
+                    console.error(
+                        "Failed to fetch appointment for reschedule",
+                        error
+                    );
+                    return;
+                }
+
+                // Map service & barber to local shapes if possible
+                const svc =
+                    services.find(
+                        (s) => String(s.id) === String(data.service_id)
+                    ) ||
+                    (data.service_id
+                        ? {
+                              id: data.service_id,
+                              name: data.service_name || "",
+                              duration: "30 minutes",
+                              price: "$0.00",
+                              description: "",
+                              icon: Scissors,
+                          }
+                        : null);
+                const bar =
+                    barbers.find(
+                        (b) => String(b.id) === String(data.barber_id)
+                    ) ||
+                    (data.barber_id
+                        ? {
+                              id: data.barber_id,
+                              name: data.barber_name || "",
+                              tag: "",
+                              avatar: "",
+                              initials: "",
+                          }
+                        : null);
+
+                setBookingData((prev) => ({
+                    ...prev,
+                    service: svc,
+                    barber: bar,
+                    date: data.appointment_date
+                        ? new Date(data.appointment_date + "T00:00:00")
+                        : prev.date,
+                    time: data.appointment_time
+                        ? String(data.appointment_time).slice(0, 5)
+                        : prev.time,
+                    name: data.customer_name || prev.name,
+                    email: data.customer_email || data.email || prev.email,
+                    phone: data.customer_phone || prev.phone,
+                    notes: data.customer_message || prev.notes,
+                    appointmentId: data.id,
+                }));
+            } catch (err) {
+                console.error("Error loading appointment for reschedule", err);
+            }
+        };
+
+        // Only attempt to load when services/barbers finished loading so mapping works.
+        if (!loadingServices && !loadingBarbers) {
+            loadAppointment();
+        }
+    }, [appointmentId, loadingServices, loadingBarbers]);
 
     // Validate booking time business rules
     const validateBookingRules = (
@@ -950,10 +1030,10 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                 );
             }
 
-            // Insert appointment
-            const { data: appointment, error: insertError } = await supabase
-                .from("appointments")
-                .insert({
+            // If appointmentId exists, update existing appointment (reschedule), otherwise insert new.
+            let appointment: any = null;
+            if (bookingData.appointmentId) {
+                const payload: any = {
                     customer_name: bookingData.name,
                     customer_email: bookingData.email,
                     customer_phone: bookingData.phone,
@@ -967,16 +1047,50 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                     appointment_time: bookingData.time + ":00",
                     end_time: endTimeStr,
                     customer_message: bookingData.notes || null,
-                    status: "pending",
-                })
-                .select()
-                .single();
+                };
+                const { data: updated, error: updateError } = await supabase
+                    .from("appointments")
+                    .update(payload)
+                    .eq("id", bookingData.appointmentId)
+                    .select()
+                    .single();
+                if (updateError) {
+                    console.error("Error updating appointment:", updateError);
+                    throw new Error(
+                        updateError.message || "Failed to update appointment"
+                    );
+                }
+                appointment = updated;
+            } else {
+                const { data: inserted, error: insertError } = await supabase
+                    .from("appointments")
+                    .insert({
+                        customer_name: bookingData.name,
+                        customer_email: bookingData.email,
+                        customer_phone: bookingData.phone,
+                        barber_id: assignedBarberId,
+                        barber_preference:
+                            !bookingData.barber ||
+                            bookingData.barber.id === "none"
+                                ? "no_preference"
+                                : "specific",
+                        service_id: bookingData.service?.id,
+                        appointment_date: toLocalDateString(bookingData.date!),
+                        appointment_time: bookingData.time + ":00",
+                        end_time: endTimeStr,
+                        customer_message: bookingData.notes || null,
+                        status: "pending",
+                    })
+                    .select()
+                    .single();
 
-            if (insertError) {
-                console.error("Error creating appointment:", insertError);
-                throw new Error(
-                    insertError.message || "Failed to create appointment"
-                );
+                if (insertError) {
+                    console.error("Error creating appointment:", insertError);
+                    throw new Error(
+                        insertError.message || "Failed to create appointment"
+                    );
+                }
+                appointment = inserted;
             }
 
             try {
@@ -2298,7 +2412,7 @@ export function BookingFlow({ onClose }: { onClose?: () => void }) {
                                             <h3 className="text-sm text-muted-foreground mb-2">
                                                 Your Information
                                             </h3>
-                                            <div className="space-y-1">
+                                            <div className="space-y-1 booking-your-info">
                                                 <p className="font-medium">
                                                     {bookingData.name}
                                                 </p>

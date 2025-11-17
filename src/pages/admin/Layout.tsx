@@ -19,6 +19,7 @@ export default function AdminLayout() {
     const [user, setUser] = useState<any>(null);
     const [collapsed, setCollapsed] = useState(false);
     const [isNarrowScreen, setIsNarrowScreen] = useState(false);
+    const [isMediumScreen, setIsMediumScreen] = useState(false);
     const asideRef = useRef<HTMLDivElement | null>(null);
     const [spacerWidth, setSpacerWidth] = useState<number>(0);
     const navigate = useNavigate();
@@ -47,6 +48,8 @@ export default function AdminLayout() {
                     setCollapsed(window.innerWidth < 1300);
                     // use 900px breakpoint for mobile overlay behavior
                     setIsNarrowScreen(window.innerWidth < 900);
+                    // medium breakpoint at 1200px for appointments-specific non-push behavior
+                    setIsMediumScreen(window.innerWidth < 1201);
                 }
             } catch (_) {
                 /* noop */
@@ -185,9 +188,16 @@ export default function AdminLayout() {
                     width: collapsed ? 80 : 240,
                     boxShadow:
                         "4px 0 6px -1px rgba(0, 0, 0, 0.1), 2px 0 4px -1px rgba(0, 0, 0, 0.06)",
-                    // When narrow screen, make the sidebar overlay the content instead of pushing it
-                    position: isNarrowScreen ? "fixed" : "fixed",
-                    zIndex: isNarrowScreen ? 60 : 40,
+                    // Position fixed always; adjust zIndex so that on appointments medium breakpoint
+                    // the expanded sidebar overlays the content while the spacer keeps layout width equal to 80.
+                    position: "fixed",
+                    zIndex: isNarrowScreen
+                        ? 60
+                        : isMediumScreen &&
+                          location.pathname.startsWith("/admin/appointments") &&
+                          !collapsed
+                        ? 60
+                        : 40,
                     // hide persistent sidebar on narrow screens when collapsed
                     display: isNarrowScreen && collapsed ? "none" : undefined,
                 }}
@@ -346,7 +356,22 @@ export default function AdminLayout() {
             <div
                 className={`shrink-0 h-screen`}
                 style={{
-                    width: isNarrowScreen ? 0 : collapsed ? 80 : 240,
+                    // For appointments page on medium screens (<1200px) do not reserve spacer (don't push content)
+                    width: ((): number => {
+                        // Narrow screens always hide spacer (overlay sidebar)
+                        if (isNarrowScreen) return 0;
+                        // For appointments on medium screens (<1201px) keep an 80px spacer
+                        // so the main content width remains constant; when the sidebar
+                        // expands it will overlay (z-index increased elsewhere).
+                        if (
+                            isMediumScreen &&
+                            location.pathname.startsWith("/admin/appointments")
+                        ) {
+                            return 80;
+                        }
+                        // Default behavior: show full or collapsed width
+                        return collapsed ? 80 : 240;
+                    })(),
                     transition: "width 300ms",
                     backgroundColor: "#F9FAFB",
                 }}
