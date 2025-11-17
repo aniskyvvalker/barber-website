@@ -50,8 +50,8 @@ export default function App() {
 
       {/* Admin routes */}
       <Route path="/admin/login" element={<Login />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Navigate to="/admin/appointments" replace />} />
         <Route path="dashboard" element={<DashboardHome />} />
         <Route path="appointments" element={<Appointments />} />
         <Route path="messages" element={<Messages />} />
