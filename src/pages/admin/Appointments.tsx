@@ -832,6 +832,7 @@ export default function Appointments() {
                             }}>
                             <BookingFlow
                                 appointmentId={newBookingInitialId || undefined}
+                                hideHeader={true}
                                 onClose={() => setShowNewBooking(false)}
                             />
                         </div>

@@ -75,9 +75,11 @@ interface BookingData {
 export function BookingFlow({
     onClose,
     appointmentId,
+    hideHeader,
 }: {
     onClose?: () => void;
     appointmentId?: string | null;
+    hideHeader?: boolean;
 }) {
     const [step, setStep] = useState(1);
     const [bookingData, setBookingData] = useState<BookingData>({
@@ -1176,38 +1178,41 @@ export function BookingFlow({
     return (
         <div className="min-h-screen bg-background booking-scope">
             {/* Dark Header Section */}
-            <div className="bg-primary text-primary-foreground py-12 px-4 relative z-50 pointer-events-auto">
-                <button
-                    onClick={onClose}
-                    onMouseEnter={(e) => {
-                        const svg = e.currentTarget.querySelector(
-                            "svg"
-                        ) as SVGElement | null;
-                        if (svg) svg.style.color = "#C9A961";
-                    }}
-                    onMouseLeave={(e) => {
-                        const svg = e.currentTarget.querySelector(
-                            "svg"
-                        ) as SVGElement | null;
-                        if (svg) svg.style.color = "";
-                    }}
-                    className="absolute top-4 right-4 z-50 p-2 cursor-pointer pointer-events-auto text-primary-foreground"
-                    aria-label="Close booking">
-                    <X className="w-6 h-6 transition-colors" />
-                </button>
-                <div className="max-w-4xl mx-auto text-center">
-                    <h1
-                        className="text-3xl md:text-4xl mb-4"
-                        style={{ fontFamily: "'Playfair Display', serif" }}>
-                        Book Your Appointment
-                    </h1>
-                    <p
-                        className="text-[#C9A961] italic text-lg"
-                        style={{ color: "#C9A961" }}>
-                        Experience the art of classic grooming with modern style
-                    </p>
+            {!hideHeader && (
+                <div className="bg-primary text-primary-foreground py-12 px-4 relative z-50 pointer-events-auto">
+                    <button
+                        onClick={onClose}
+                        onMouseEnter={(e) => {
+                            const svg = e.currentTarget.querySelector(
+                                "svg"
+                            ) as SVGElement | null;
+                            if (svg) svg.style.color = "#C9A961";
+                        }}
+                        onMouseLeave={(e) => {
+                            const svg = e.currentTarget.querySelector(
+                                "svg"
+                            ) as SVGElement | null;
+                            if (svg) svg.style.color = "";
+                        }}
+                        className="absolute top-4 right-4 z-50 p-2 cursor-pointer pointer-events-auto text-primary-foreground"
+                        aria-label="Close booking">
+                        <X className="w-6 h-6 transition-colors" />
+                    </button>
+                    <div className="max-w-4xl mx-auto text-center">
+                        <h1
+                            className="text-3xl md:text-4xl mb-4"
+                            style={{ fontFamily: "'Playfair Display', serif" }}>
+                            Book Your Appointment
+                        </h1>
+                        <p
+                            className="text-[#C9A961] italic text-lg"
+                            style={{ color: "#C9A961" }}>
+                            Experience the art of classic grooming with modern
+                            style
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Progress Stepper */}
