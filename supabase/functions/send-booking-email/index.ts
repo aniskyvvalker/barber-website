@@ -42,7 +42,7 @@ serve(async (req) => {
   const corsHeaders = {
     [CORS_HEADER_KEYS.allowOrigin]: accessControlAllowOrigin,
     [CORS_HEADER_KEYS.allowHeaders]:
-      "authorization, x-client-info, apikey, content-type",
+      "authorization, x-client-info, apikey, content-type, x-api-key",
     [CORS_HEADER_KEYS.allowMethods]: "POST, OPTIONS",
   }
 
@@ -50,10 +50,19 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  try {
+    try {
     if (!originIsAllowed) {
       return new Response(JSON.stringify({ error: "Origin not allowed" }), {
         status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      })
+    }
+    // Validate function-level API key header
+    const providedApiKey = req.headers.get("x-api-key") || ""
+    const expectedApiKey = Deno.env.get("EMAIL_FUNCTION_API_KEY") || ""
+    if (!expectedApiKey || providedApiKey !== expectedApiKey) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       })
     }
