@@ -1,5 +1,22 @@
 node_modules/
 dist/
+build/
+.venv/
+.env
+.env.local
+.cache/
+/.parcel-cache
+/.idea
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vite
+apps/
+packages/
+testsprite_tests/tmp/
+node_modules/
+dist/
 .env
 .env.local
 
