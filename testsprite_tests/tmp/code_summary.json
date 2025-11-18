@@ -1,0 +1,46 @@
+{
+    "tech_stack": [
+        "TypeScript",
+        "React 18",
+        "Vite",
+        "Supabase (Postgres)",
+        "Tailwind CSS (styles)",
+        "Node/npm"
+    ],
+    "features": [
+        {
+            "name": "BookingFlow component",
+            "description": "Frontend booking flow UI and logic for creating appointments.",
+            "files": ["src/components/BookingFlow.tsx"]
+        },
+        {
+            "name": "Admin pages",
+            "description": "Admin dashboard and appointments management pages for staff.",
+            "files": [
+                "src/pages/admin/Dashboard.tsx",
+                "src/pages/admin/Appointments.tsx",
+                "src/pages/admin/Layout.tsx"
+            ]
+        },
+        {
+            "name": "App entry and routing",
+            "description": "Application entry point, routing and top-level app component.",
+            "files": ["src/main.tsx", "src/App.tsx", "index.html"]
+        },
+        {
+            "name": "Supabase integration",
+            "description": "Configuration for local Supabase and client usage to persist appointments and auth.",
+            "files": ["supabase/config.toml", "src/lib/supabase.ts"]
+        },
+        {
+            "name": "Vite config and dev server",
+            "description": "Vite configuration, dev server port is set to 3000.",
+            "files": ["vite.config.ts", "package.json"]
+        },
+        {
+            "name": "Global styles",
+            "description": "Global CSS including Tailwind / custom styles used across the app.",
+            "files": ["src/styles/globals.css"]
+        }
+    ]
+}

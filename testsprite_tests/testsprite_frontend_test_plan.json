@@ -1,0 +1,20 @@
+{
+    "project": "IMPERIALcut Barbershop Website Booking",
+    "type": "frontend",
+    "localEndpoint": "http://localhost:3000",
+    "tests": [
+        {
+            "id": "TC001",
+            "name": "Open landing page",
+            "description": "Navigate to the root URL and verify the landing page loads.",
+            "steps": [
+                { "action": "goto", "value": "/" },
+                {
+                    "action": "waitForElement",
+                    "value": "text=Book Appointment"
+                },
+                { "action": "assertVisible", "value": "text=Book Appointment" }
+            ]
+        }
+    ]
+}

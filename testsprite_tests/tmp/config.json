@@ -1,0 +1,17 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "loginUser": "brio00557@gmail.com",
+  "loginPassword": "7vzaMNzzBh@UBNp",
+  "executionArgs": {
+    "projectName": "IMPERIALcut Barbershop Website Booking",
+    "projectPath": "/Users/pc/Downloads/IMPERIALcut Barbershop Website Booking",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": ""
+    }
+  }
+}

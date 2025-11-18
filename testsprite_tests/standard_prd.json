@@ -1,0 +1,17 @@
+{
+  "title": "IMPERIALcut — Product Requirements Document",
+  "date": "2025-11-17",
+  "overview": "Booking website for IMPERIALcut with customer booking flow and admin dashboard.",
+  "acceptance_criteria": [
+    "Customers can complete a booking end-to-end and receive an email confirmation.",
+    "Admin can view new bookings in the dashboard and mark them as read/confirmed.",
+    "Booking system enforces service durations and barber availability to avoid conflicts.",
+    "The site is responsive and accessible by WCAG 2.1 AA-level basics."
+  ],
+  "key_features": [
+    "Booking Flow UI: multi-step booking with service/barber selection and live availability.",
+    "Admin pages: appointments, availability, barbers, services, messages, dashboard.",
+    "Persistence via Supabase and confirmation emails via Supabase Edge Function."
+  ]
+}
+

@@ -18,50 +18,55 @@ import { GetInTouch } from "./components/GetInTouch";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import { BookingFlow } from "./components/BookingFlow";
+import { AuroraBackgroundDemo } from "./components/ui/aurora-background-demo";
 
 export default function App() {
-  const [showBooking, setShowBooking] = useState(false);
+    const [showBooking, setShowBooking] = useState(false);
 
-  const Home = () => {
-    if (showBooking) {
-      return <BookingFlow onClose={() => setShowBooking(false)} />;
-    }
+    const Home = () => {
+        if (showBooking) {
+            return <BookingFlow onClose={() => setShowBooking(false)} />;
+        }
+        return (
+            <div className="min-h-screen overflow-x-hidden">
+                <Navigation onBookingClick={() => setShowBooking(true)} />
+                <main>
+                    <Hero onBookingClick={() => setShowBooking(true)} />
+                    <Services />
+                    <Team />
+                    <Gallery />
+                    <Testimonials />
+                    <Contact />
+                    <GetInTouch />
+                </main>
+                <Footer />
+            </div>
+        );
+    };
+
     return (
-      <div className="min-h-screen overflow-x-hidden">
-        <Navigation onBookingClick={() => setShowBooking(true)} />
-        <main>
-          <Hero onBookingClick={() => setShowBooking(true)} />
-          <Services />
-          <Team />
-          <Gallery />
-          <Testimonials />
-          <Contact />
-          <GetInTouch />
-        </main>
-        <Footer />
-      </div>
+        <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Home />} />
+
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<Login />} />
+            <Route path="/aurora" element={<AuroraBackgroundDemo />} />
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route
+                    index
+                    element={<Navigate to="/admin/appointments" replace />}
+                />
+                <Route path="dashboard" element={<DashboardHome />} />
+                <Route path="appointments" element={<Appointments />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="barbers" element={<Barbers />} />
+                <Route path="availability" element={<Availability />} />
+                <Route path="services" element={<AdminServices />} />
+            </Route>
+
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
     );
-  };
-
-  return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Home />} />
-
-      {/* Admin routes */}
-      <Route path="/admin/login" element={<Login />} />
-        <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="/admin/appointments" replace />} />
-        <Route path="dashboard" element={<DashboardHome />} />
-        <Route path="appointments" element={<Appointments />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="barbers" element={<Barbers />} />
-        <Route path="availability" element={<Availability />} />
-        <Route path="services" element={<AdminServices />} />
-      </Route>
-
-      {/* Catch all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
 }
