@@ -82,25 +82,40 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
+          .map(([theme, prefix]) => {
+            return `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
-    const color =
+    const rawColor =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color;
+    const color = sanitizeColor(rawColor);
     return color ? `  --color-${key}: ${color};` : null;
   })
+  .filter(Boolean)
   .join("\n")}
 }
-`,
-          )
+`;
+          })
           .join("\n"),
       }}
     />
   );
 };
+
+// Allow only safe CSS color tokens: hex, rgb(a), or var(--name)
+function sanitizeColor(value?: string | undefined) {
+  if (!value || typeof value !== "string") return "";
+  const v = value.trim();
+  // hex colors like #fff, #ffffff, #ffffffff
+  if (/^#([0-9a-fA-F]{3,8})$/.test(v)) return v;
+  // css var like var(--primary)
+  if (/^var\(--[a-zA-Z0-9-_]+\)$/.test(v)) return v;
+  // rgb/rgba formats
+  if (/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(0|1|0?\.\d+))?\s*\)$/.test(v)) return v;
+  return "";
+}
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
