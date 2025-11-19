@@ -12,14 +12,39 @@ export default function Dashboard() {
     useEffect(() => {
         const checkAuth = async () => {
             const {
-                data: { user },
-            } = await supabase.auth.getUser();
-            if (!user) {
+                data: { session },
+            } = await supabase.auth.getSession();
+
+            const accessToken = session?.access_token;
+            if (!accessToken) {
                 navigate("/admin/login");
-            } else {
-                setUser(user);
+                setLoading(false);
+                return;
             }
-            setLoading(false);
+
+            try {
+                const resp = await fetch("/api/admin/check", {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                if (!resp.ok) {
+                    navigate("/admin/login");
+                    setLoading(false);
+                    return;
+                }
+                const json = await resp.json().catch(() => ({}));
+                if (json.ok && json.is_admin) {
+                    setUser({ id: json.user?.id, email: json.user?.email });
+                } else {
+                    navigate("/admin/login");
+                }
+            } catch (e) {
+                navigate("/admin/login");
+            } finally {
+                setLoading(false);
+            }
         };
         checkAuth();
     }, [navigate]);

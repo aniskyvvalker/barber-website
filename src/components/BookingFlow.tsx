@@ -1109,9 +1109,15 @@ export function BookingFlow({
                     const n = parseFloat(cleaned);
                     return isNaN(n) ? 0 : n;
                 })();
-                const { data: emailData, error: emailError } =
-                    await supabase.functions.invoke("send-booking-email", {
-                        body: {
+                try {
+                    const sendResp = await fetch("/api/send-email", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "x-api-key": import.meta.env
+                                .VITE_SEND_EMAIL_API_KEY as string,
+                        },
+                        body: JSON.stringify({
                             to: bookingData.email,
                             customerName: bookingData.name,
                             serviceName: selectedService.name,
@@ -1119,12 +1125,20 @@ export function BookingFlow({
                             appointmentDate: formattedDate,
                             appointmentTime: bookingData.time,
                             price: priceNumber,
-                        },
+                        }),
                     });
-                if (emailError) {
+
+                    const sendJson = await sendResp.json().catch(() => ({}));
+                    if (!sendResp.ok || !sendJson.ok) {
+                        console.error("Error sending email:", sendJson);
+                    } else {
+                        console.log(
+                            "✅ Confirmation email sent:",
+                            sendJson.data
+                        );
+                    }
+                } catch (emailError) {
                     console.error("Error sending email:", emailError);
-                } else {
-                    console.log("✅ Confirmation email sent:", emailData);
                 }
             } catch (emailError) {
                 console.error("Error sending email:", emailError);
